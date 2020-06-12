@@ -1,0 +1,8 @@
+---
+- name: Upgrade OCP cluster
+  hosts: bastion
+  tasks:
+    - include_role:
+        name: ocp-upgrade
+      when: upgrade_image!= ""
+

@@ -1,0 +1,5 @@
+---
+upgrade_image: ""  #OCP upgrade image
+pause_time: 90     #Pauses playbook execution for a set amount of time in minutes
+delay_time: 600    #Number of seconds to wait before starting to poll
+

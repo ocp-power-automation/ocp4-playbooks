@@ -1,0 +1,18 @@
+---
+
+- name: Upgrade cluster
+  shell: |
+    oc adm upgrade --force --to-image="{{ upgrade_image }}" --allow-explicit-upgrade
+
+- name: Waiting until upgrade completes
+  pause:
+    minutes: "{{ pause_time }}"
+
+- name: Check for upgrade completion
+  shell: |
+    oc get clusterversion -o json|jq ".items[0].status.history[0].state"
+  register: state
+  until: state.stdout | replace('\"', '') == "Completed"
+  retries: 5
+  delay: "{{ delay_time }}"
+
