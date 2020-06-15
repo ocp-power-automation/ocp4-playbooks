@@ -1,15 +1,15 @@
-# Ansible Playbooks for installing Openshift Container Platform 4.X
+# Introduction
+The playbooks are used for installation of OCP on Power and other post install customizations.
+The playbooks are used with the following projects [1](https://github.com/ocp-power-automation/ocp4_upi_powervm)
+and [2](https://github.com/ocp-power-automation/ocp4_upi_kvm)
 
-The playbooks are used for installation of OCP on Power and other post installation steps. Before running the playbooks on the bastion node, ensure that all the required services are configured.
+## Assumptions
 
-## Assumptions:
-
- - A bastion node is already created where the playbooks would run.
- - The required services are configured on the bastion node eg: HTTP, HAProxy, DNS, DHCP, etc. This can also be achieved by using [ocp4-helpernode](https://github.com/RedHatOfficial/ocp4-helpernode) playbook.
+ - A bastion/helper node is already created where the playbooks would run.
+ - The required services are configured on the bastion/helper node eg: HTTP, HAProxy, DNS, DHCP, etc.
  - The cluster nodes are already created.
- - The playbooks are supported to use with https://github.com/ocp-power-automation/ocp4_upi_powervm only.
 
-## Set up variables
+## Set up the required variables
 
 Make use of the sample file at `examples/install_vars.yaml`. Modify the values as per your cluster.
 
@@ -17,12 +17,12 @@ Make use of the sample file at `examples/install_vars.yaml`. Modify the values a
 cp examples/install_vars.yaml .
 ```
 
-## Use install_vars.yaml
+### Use install_vars.yaml
 
 This section sets the variables for the install-config.yaml template file.
 
 ```
-install_config: 
+install_config:
    cluster_domain: < Cluster domain name. Match to the baseDomain in install-config.yaml.>
    cluster_id: < Cluster identifier. Match to the metadata.name in install-config.yaml.>
    pull_secret: '<pull-secret json content>'
