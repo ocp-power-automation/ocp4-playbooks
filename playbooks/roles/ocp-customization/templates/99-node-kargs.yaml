@@ -6,6 +6,6 @@ metadata:
   name: '99-{{ role }}-kargs'
 spec:
   kernelArguments:
-{% for option in rhcos_kernal_options %}
+{% for option in rhcos_kernel_options %}
      - '{{ option }}'
 {% endfor %}
