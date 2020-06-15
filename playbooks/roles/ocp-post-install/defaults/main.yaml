@@ -1,0 +1,5 @@
+---
+# defaults file
+
+workdir: ~/ocp4-workdir
+rhcos_kernel_options: []

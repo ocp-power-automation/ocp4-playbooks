@@ -1,0 +1,21 @@
+---
+# tasks file for ocp4 post install
+
+- name: Configure RHCOS kernel options via MachineConfig
+  when: rhcos_kernel_options | length > 0
+  block:
+    - name: Create kernel options CRDs
+      vars:
+        role: '{{ item }}'
+      template:
+        src: 99-node-kargs.yaml
+        dest: "{{ workdir }}/99-{{ item }}-kargs.yaml"
+      with_items:
+        - master
+        - worker
+
+    - name: Apply the MachineConfig CRDs
+      shell: "oc apply -f {{ workdir }}/99-{{ item }}-kargs.yaml"
+      with_items:
+        - master
+        - worker
