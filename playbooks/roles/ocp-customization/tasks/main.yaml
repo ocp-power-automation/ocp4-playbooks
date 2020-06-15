@@ -1,0 +1,6 @@
+---
+# tasks file for ocp4 post install customizations
+
+- name: Configure RHCOS kernel options via MachineConfig
+  when: rhcos_kernel_options | length > 0
+  import_tasks: kernel.yaml

@@ -36,7 +36,7 @@
   vars:
     worker_count: "{{ groups['workers'] | length }}"
 
-- name: Post Install OCP
+- name: OCP post-install customizations
   hosts: bastion
   roles:
-  - ocp-post-install
+  - ocp-customization
