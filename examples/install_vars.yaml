@@ -9,3 +9,5 @@ workdir: ~/ocp4-workdir
 storage_type: nfs
 log_level: info
 release_image_override: ""
+
+rhcos_kernel_options: []

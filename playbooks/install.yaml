@@ -35,3 +35,8 @@
   - ocp-install
   vars:
     worker_count: "{{ groups['workers'] | length }}"
+
+- name: OCP post-install customizations
+  hosts: bastion
+  roles:
+  - ocp-customization
