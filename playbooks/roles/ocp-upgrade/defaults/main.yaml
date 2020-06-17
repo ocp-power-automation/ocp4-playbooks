@@ -1,0 +1,7 @@
+---
+# defaults file
+
+upgrade_image: ""
+pause_time: 90
+delay_time: 600
+
