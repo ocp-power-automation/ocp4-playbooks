@@ -1,0 +1,12 @@
+---
+- name: Modify kernel tunables via tuned operator
+  include_vars: tuned.yaml
+
+- name: Create tuned CRDs
+  template:
+    src: tuned-sysctl-tuning.yaml
+    dest: "{{ workdir }}/10-tuned-sysctl-tuning.yaml"
+
+- name: Apply the tuned CRDs
+  shell: "oc apply -f {{ workdir }}/10-tuned-sysctl-tuning.yaml"
+
