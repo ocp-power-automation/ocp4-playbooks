@@ -18,6 +18,8 @@ Role Variables
 | log_level               | no       | info           | Option --log-level in openshift-install cmd |
 | release_image_override  | no       | ""             | OCP image overide variable                  |
 | master_count            | yes      |                | Number of master nodes                      |
+| proxy_url               | no       | ""             | Proxy url eg: http://[user:passwd@]server:port |
+| no_proxy                | no       | ""             | Comma seperated string of domains/cidr to exclude proxy |
 
 Dependencies
 ------------

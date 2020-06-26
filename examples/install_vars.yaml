@@ -11,3 +11,7 @@ log_level: info
 release_image_override: ""
 
 rhcos_kernel_options: []
+
+proxy_url: ""
+no_proxy: ""
+
