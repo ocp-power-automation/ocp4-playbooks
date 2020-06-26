@@ -1,0 +1,23 @@
+---
+#tuned operator options
+#sysctl_options:
+#  -  <sysctl_key> = <value> # eg. kernel.shmmni = 16384
+#  -  <sysctl_key> = <value> # eg. net.ipv4.tcp_tw_reuse=1
+
+#match_array:
+#  - label: <label_name>     #Node or Pod label name
+#    value: <label_value>    #Optional; if ommitted label name is sufficient
+#    type: <label_type>      #Optional pod or node type; if ommitted default is node
+
+# Example
+sysctl_options:
+  -  kernel.shmmni = 16384
+  -  net.ipv4.tcp_tw_reuse = 1
+
+match_array:
+  - label: node-role.kubernetes.io/master
+  - label: icp4data
+    value: database-db2oltp
+    type: pod
+  - label: disk
+    value: ssd

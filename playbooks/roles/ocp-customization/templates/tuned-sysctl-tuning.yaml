@@ -1,0 +1,23 @@
+apiVersion: tuned.openshift.io/v1
+kind: Tuned
+metadata:
+  name: tuned-sysctl-settings
+  namespace: openshift-cluster-node-tuning-operator
+spec:
+  profile:
+  - name: tuned-sysctl-settings
+    data: |
+      [main]
+      summary=Custom sysctl settings for OpenShift nodes
+      include=openshift-node
+
+      [sysctl]
+{% for option in sysctl_options %}
+      {{ option }}
+{% endfor %}
+
+  recommend:
+  - match:
+    {{ match_array | to_nice_yaml(indent=2) | trim | indent(4) }}
+    priority: 10
+    profile: tuned-sysctl-settings

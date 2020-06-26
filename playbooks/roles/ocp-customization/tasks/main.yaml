@@ -4,3 +4,7 @@
 - name: Configure RHCOS kernel options via MachineConfig
   when: rhcos_kernel_options | length > 0
   import_tasks: kernel.yaml
+
+- name: Configure Kernel tunables (sysctl) via Tuned Operator
+  when: sysctl_tuned_options
+  import_tasks: tuned.yaml
