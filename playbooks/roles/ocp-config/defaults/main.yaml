@@ -4,3 +4,4 @@
 workdir: ~/ocp4-workdir
 log_level: info
 release_image_override: ""
+enable_local_registry: false
