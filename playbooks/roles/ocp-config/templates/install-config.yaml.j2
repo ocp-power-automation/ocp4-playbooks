@@ -19,7 +19,7 @@ networking:
     hostPrefix: 23
   networkType: OpenShiftSDN
   serviceNetwork:
-  - 172.30.0.0/16
+  - {{ install_config.servicenetwork}}
 platform:
   none: {}
 pullSecret: '{{ install_config.pull_secret }}'
