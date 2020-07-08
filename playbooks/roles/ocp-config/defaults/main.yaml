@@ -4,3 +4,6 @@
 workdir: ~/ocp4-workdir
 log_level: info
 release_image_override: ""
+proxy_url: ""
+no_proxy: ""
+
