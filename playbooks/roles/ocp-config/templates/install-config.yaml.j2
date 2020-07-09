@@ -24,3 +24,9 @@ platform:
   none: {}
 pullSecret: '{{ install_config.pull_secret }}'
 sshKey: '{{ install_config.public_ssh_key }}'
+{% if proxy_url != "" %}
+proxy:
+  httpProxy: {{ proxy_url }}
+  httpsProxy: {{ proxy_url }}
+  noProxy: {{ install_config.cluster_domain }},10.128.0.0/14,172.30.0.0/16,{{ no_proxy }}
+{% endif %}
