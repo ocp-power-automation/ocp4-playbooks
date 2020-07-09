@@ -8,6 +8,9 @@ Requirements
 
  - All the required configurations are done on the bastion node eg: HTTP, openshift-install binary is available on $PATH. This can also be achieved by using [ocp4-helpernode](https://github.com/RedHatOfficial/ocp4-helpernode) playbook.
  - Master count can be extracted from host group 'masters'.
+ - Updated pull secret file with registry credentials located at `~/.openshift/pull-secret-updated` (Required for restricted network install)
+ - Registry certificate file located at `/opt/registry/certs/domain.crt` (Required for restricted network install)
+ - Local registry with local repo named as `ocp4/openshift4` (Required for restricted network install)
 
 Role Variables
 --------------
@@ -20,6 +23,7 @@ Role Variables
 | master_count            | yes      |                | Number of master nodes                      |
 | proxy_url               | no       | ""             | Proxy url eg: http://[user:passwd@]server:port |
 | no_proxy                | no       | ""             | Comma seperated string of domains/cidr to exclude proxy |
+| enable_local_registry   | no       | false          | Set to true to enable usage of local registry for restricted network install |
 
 Dependencies
 ------------
@@ -45,3 +49,4 @@ Author Information
 ------------------
 
 Yussuf Shaikh (yussuf@us.ibm.com)
+Prajyot Parab (prajyot.parab@ibm.com)

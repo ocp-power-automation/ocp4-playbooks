@@ -15,7 +15,15 @@
       with_items:
       - directory
 
+    - name: Extract OCP4 tools from release image ( local-registry )
+      when: enable_local_registry
+      shell: |
+        oc adm release extract --tools {{ release_image_override }} --registry-config='{{ ansible_env.HOME }}/.openshift/pull-secret-updated'
+      args:
+        chdir: "{{ tools_dir }}"
+
     - name: Extract OCP4 tools from release image
+      when: not enable_local_registry
       shell: |
         echo '{{ install_config.pull_secret }}' > pull_secret
         oc adm release extract --tools {{ release_image_override }} --registry-config='pull_secret'

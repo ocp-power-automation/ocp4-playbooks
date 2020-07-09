@@ -1,5 +1,5 @@
 ---
-install-config:
+install_config:
   cluster_domain: example.com
   cluster_id: test
   pull_secret: {json goes here}
@@ -14,4 +14,6 @@ rhcos_kernel_options: []
 
 proxy_url: ""
 no_proxy: ""
+
+enable_local_registry: false
 
