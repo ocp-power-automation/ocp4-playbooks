@@ -22,8 +22,21 @@ networking:
   - 172.30.0.0/16
 platform:
   none: {}
-pullSecret: '{{ install_config.pull_secret }}'
 sshKey: '{{ install_config.public_ssh_key }}'
+{% if enable_local_registry %}
+pullSecret: '{{ lookup('file', '~/.openshift/pull-secret-updated') }}'
+additionalTrustBundle: |
+{{ lookup('file', '/opt/registry/certs/domain.crt') | indent(2, first=True) }}
+imageContentSources:
+- mirrors:
+  - registry.{{ install_config.cluster_id }}.{{ install_config.cluster_domain }}:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-release
+- mirrors:
+  - registry.{{ install_config.cluster_id }}.{{ install_config.cluster_domain }}:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+{% else %}
+pullSecret: '{{ install_config.pull_secret }}'
+{% endif %}
 {% if proxy_url != "" %}
 proxy:
   httpProxy: {{ proxy_url }}
