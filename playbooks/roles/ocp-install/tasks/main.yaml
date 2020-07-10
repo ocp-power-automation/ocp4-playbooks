@@ -6,6 +6,11 @@
     path: ~/.kube
     state: directory
 
+- name: Enable oc bash completion
+  shell: "oc completion bash >>/etc/bash_completion.d/oc_completion"
+  args:
+    chdir: "{{ workdir }}"
+
 - name: Install kubeconfig
   copy:
     src: "{{ workdir }}/auth/kubeconfig"
