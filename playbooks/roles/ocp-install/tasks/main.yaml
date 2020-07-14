@@ -8,8 +8,6 @@
 
 - name: Enable oc bash completion
   shell: "oc completion bash >>/etc/bash_completion.d/oc_completion"
-  args:
-    chdir: "{{ workdir }}"
 
 - name: Install kubeconfig
   copy:
@@ -59,3 +57,18 @@
     src: "{{ workdir }}/auth/kubeconfig"
     dest: "~/.kube/config"
     force: yes
+
+- name: Create admin authentication using htpasswd
+  tags: admin-user
+  include: templates/create_oauth.yaml
+
+  template:
+    src: templates/ocp_install_scripts_create_admin_user.j2
+    dest: "{{ workdir }}/create_admin_user.sh"
+    owner: root
+    group: root
+    mode: 0755
+  
+  shell: "create_admin_user.sh"
+  args:
+    chdir: "{{ workdir }}"
