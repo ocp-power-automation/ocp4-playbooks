@@ -62,6 +62,7 @@
   tags: admin-user
   include: templates/create_oauth.yaml
 
+- name: Template
   template:
     src: templates/ocp_install_scripts_create_admin_user.j2
     dest: "{{ workdir }}/create_admin_user.sh"
