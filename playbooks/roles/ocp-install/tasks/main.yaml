@@ -73,6 +73,6 @@
   
 - name: Create admin user
   tags: admin-user
-  shell: "create_admin_user.sh"
+  shell: "./create_admin_user.sh"
   args:
     chdir: "{{ workdir }}"
