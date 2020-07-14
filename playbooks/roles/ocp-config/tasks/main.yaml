@@ -48,8 +48,8 @@
     path: "{{ workdir }}"
   register: dir_status
 
-#- meta: end_play
-#  when: dir_status.stat.exists
+- meta: end_play
+  when: dir_status.stat.exists
 
 - name: Setup openshift workdir
   file:
