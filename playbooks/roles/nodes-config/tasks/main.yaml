@@ -6,7 +6,7 @@
   wait_for_connection:
     delay: 15
     connect_timeout: 15
-    timeout: 1800
+    timeout: "{{ node_connection_timeout }}"
 
 - name: Configure node
   shell: |

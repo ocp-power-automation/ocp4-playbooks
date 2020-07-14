@@ -10,10 +10,11 @@ storage_type: nfs
 log_level: info
 release_image_override: ""
 
+node_connection_timeout: 2700
+
 rhcos_kernel_options: []
 
 proxy_url: ""
 no_proxy: ""
 
 enable_local_registry: false
-
