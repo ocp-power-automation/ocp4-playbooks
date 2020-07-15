@@ -1,3 +1,4 @@
 ---
 # defaults file
 
+node_connection_timeout: 2700

@@ -10,12 +10,14 @@ Requirements
  - Inventory should have host groups named bootstrap, masters, workers.
  - Only 'core' user is allowed to ssh to the cluster nodes.
  - OCP install configuration should be created and the machines should be ignited before running this role.
- - The wait_for_connection will timeout after 20 minutes.
+ - Connection will timeout after 45 minutes (configurable).
 
 Role Variables
 --------------
 
-None
+| Variable                | Required | Default        | Comments                                    |
+|-------------------------|----------|----------------|---------------------------------------------|
+| node_connection_timeout | no       | 2700           | Maximum number of seconds to wait for       |
 
 Dependencies
 ------------
