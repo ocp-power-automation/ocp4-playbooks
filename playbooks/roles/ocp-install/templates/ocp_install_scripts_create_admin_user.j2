@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+oc create secret generic htpass-secret --from-file=htpasswd={{ workdir }}/htpasswd -n openshift-config
+oc apply -f {{ workdir }}/ocp_oauth.yaml
+oc adm policy add-cluster-role-to-user cluster-admin admin
