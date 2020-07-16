@@ -99,7 +99,7 @@
     src: "{{ item }}"
     dest: "{{ workdir }}/manifests"
   with_fileglob:
-    - "/root/machineconfig/*" 
+    - "/root/ocp4-helpernode/machineconfig/*" 
 
 - name: Make the control-plane un-schedulable
   lineinfile:
