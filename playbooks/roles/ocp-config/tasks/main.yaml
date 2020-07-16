@@ -94,6 +94,13 @@
     - "{{ workdir }}/openshift/99_openshift-cluster-api_master-machines-*.yaml"
     - "{{ workdir }}/openshift/99_openshift-cluster-api_worker-machineset-*.yaml"
 
+- name: Copy ocp4-helper machineconfig files into manifests dir
+  copy:
+    src: "{{ item }}"
+    dest: "{{ workdir }}/manifests"
+  with_fileglob:
+    - "/root/machineconfig/*" 
+
 - name: Make the control-plane un-schedulable
   lineinfile:
     path: "{{ workdir }}/manifests/cluster-scheduler-02-config.yml"
