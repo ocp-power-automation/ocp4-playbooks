@@ -37,9 +37,9 @@ imageContentSources:
 {% else %}
 pullSecret: '{{ install_config.pull_secret }}'
 {% endif %}
-{% if proxy_url != "" %}
+{% if setup_squid_proxy or proxy_url != "" %}
 proxy:
-  httpProxy: {{ proxy_url }}
-  httpsProxy: {{ proxy_url }}
+  httpProxy: {{ squid_proxy_url | default(proxy_url) }}
+  httpsProxy: {{ squid_proxy_url | default(proxy_url) }}
   noProxy: .{{ install_config.cluster_id }}.{{ install_config.cluster_domain }},{{ no_proxy }}
 {% endif %}

@@ -1,0 +1,11 @@
+---
+# handlers file for ansible-squid
+- name: restart squid
+  service:
+    name: squid
+    state: restarted
+
+- name: restart firewalld
+  service:
+    name: firewalld
+    state: restarted

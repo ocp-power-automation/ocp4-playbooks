@@ -1,0 +1,30 @@
+---
+
+- name: Install Squid package
+  package:
+    name: squid
+    state: present
+
+- name: Configure Squid
+  template:
+    src: etc/squid/squid.conf.j2
+    dest: /etc/squid/squid.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  become: true
+  notify:
+    - restart squid
+
+- name: Add Squid to firewall
+  firewalld:
+    service: squid
+    permanent: true
+    state: enabled
+    zone: public
+  notify:
+    - restart firewalld
+
+- name: Set proxy details
+  set_fact:
+    squid_proxy_url: "http://{{ ansible_host }}:{{ squid_http_port }}"

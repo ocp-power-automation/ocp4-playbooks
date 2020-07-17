@@ -1,0 +1,31 @@
+---
+
+squid_acl_localnet:
+  - acl localnet src 10.0.0.0/8             # RFC 1918 local private network (LAN)
+  - acl localnet src 172.16.0.0/12          # RFC 1918 local private network (LAN)
+  - acl localnet src 192.168.0.0/16         # RFC 1918 local private network (LAN)
+
+squid_other_acl:
+  - acl SSL_ports port 443
+  - acl Safe_ports port 80          # http
+  - acl Safe_ports port 21          # ftp
+  - acl Safe_ports port 443         # https
+  - acl Safe_ports port 70          # gopher
+  - acl Safe_ports port 210         # wais
+  - acl Safe_ports port 1025-65535  # unregistered ports
+  - acl Safe_ports port 280         # http-mgmt
+  - acl Safe_ports port 488         # gss-http
+  - acl Safe_ports port 591         # filemaker
+  - acl Safe_ports port 777         # multiling http
+  - acl CONNECT method CONNECT
+
+squid_http_access:
+  - http_access deny !Safe_ports
+  - http_access deny CONNECT !SSL_ports
+  - http_access allow localhost manager
+  - http_access deny manager
+  - http_access allow localnet
+  - http_access allow localhost
+  - http_access deny all
+
+squid_http_port: 3128
