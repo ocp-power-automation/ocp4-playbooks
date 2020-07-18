@@ -41,5 +41,5 @@ pullSecret: '{{ install_config.pull_secret }}'
 proxy:
   httpProxy: {{ proxy_url }}
   httpsProxy: {{ proxy_url }}
-  noProxy: {{ install_config.cluster_domain }},10.128.0.0/14,172.30.0.0/16,{{ no_proxy }}
+  noProxy: .{{ install_config.cluster_id }}.{{ install_config.cluster_domain }},{{ no_proxy }}
 {% endif %}
