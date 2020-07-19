@@ -1,0 +1,22 @@
+{{ ansible_managed|comment }}
+
+# ACLS
+{% for item in squid_acl_localnet %}
+{{ item }}
+{% endfor %}
+{% for item in squid_other_acl %}
+{{ item }}
+{% endfor %}
+
+{% for item in squid_http_access %}
+{{ item }}
+{% endfor %}
+
+http_port {{ squid_http_port }}
+
+
+coredump_dir /var/spool/squid
+refresh_pattern ^ftp:           1440    20%     10080
+refresh_pattern ^gopher:        1440    0%      1440
+refresh_pattern -i (/cgi-bin/|\?) 0     0%      0
+refresh_pattern .               0       20%     4320

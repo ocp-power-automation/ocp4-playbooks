@@ -1,5 +1,11 @@
 ---
 # tasks file for ocp4 config
+
+- name: Setup Squid proxy server
+  import_tasks: squid.yaml
+  when: setup_squid_proxy
+
+
 - name: Extract OCP4 tools
   when: release_image_override != ""
   block:
