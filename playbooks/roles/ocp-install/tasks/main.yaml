@@ -16,8 +16,8 @@
   shell: |
     oc get csr -ojson | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs -r oc adm certificate approve
   until: lookup('pipe','oc get nodes | grep -w worker | grep -w Ready | wc -l') == worker_count
-  retries: 20
-  delay: 30
+  retries: 30
+  delay: 60
 
 - name: Wait for install-complete
   shell: "openshift-install wait-for install-complete --log-level {{ log_level }}"
