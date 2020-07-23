@@ -1,4 +1,5 @@
 ---
+setup_squid_proxy: false
 
 squid_acl_localnet:
   - acl localnet src 10.0.0.0/8             # RFC 1918 local private network (LAN)
