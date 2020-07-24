@@ -25,6 +25,20 @@ Role Variables
 | proxy_url               | no       | ""             | Proxy url eg: http://[user:passwd@]server:port (NA when setup_squid_proxy: true)|
 | no_proxy                | no       | ""             | Comma seperated string of domains/cidr to exclude proxy |
 | enable_local_registry   | no       | false          | Set to true to enable usage of local registry for restricted network install |
+| chronyconfig.enabled    | no       | flase          | Set to true to enable chrony configuration on the coreOS node during install |
+| chronyconfig.content    | no       | ""             | List of time servers and options pair (see chronyconfig examples) |
+
+*chronyconfig variable example *
+
+```yaml
+chronyconfig:
+   enabled: true
+   content:
+     - server: ntp1.example.com
+       options: iburst
+     - server: ntp2.example.com
+       options: iburst
+```
 
 Dependencies
 ------------

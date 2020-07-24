@@ -16,7 +16,7 @@ files.append(
         'source': 'data:text/plain;charset=utf-8;base64,' + dhcp_client_conf_b64,
         'verification': {}
         },
-    'filesystem': 'root',
+    'filesystem': 'root'
 })
 
 dhclient_cont_b64 = base64.standard_b64encode(b'send dhcp-client-identifier = hardware;\nprepend domain-name-servers 127.0.0.1;\n').decode().strip()
@@ -30,6 +30,23 @@ files.append(
         },
     'filesystem': 'root'
 })
+
+if os.path.isfile('/tmp/chrony.conf.tmp'):
+    with open("/tmp/chrony.conf.tmp", "rb") as chronyconf:
+        chrony_b64 = base64.standard_b64encode(chronyconf.read()).decode().strip()
+        files.append(
+        {
+            'path': '/etc/chrony.conf',
+            'user': {
+                'name': 'root'
+            },
+            'mode': 420,
+            'contents': {
+                'source': 'data:text/plain;charset=utf-8;base64,' + chrony_b64,
+                'verification': {}
+                },
+            'filesystem': 'root'
+        })
 
 ignition['storage']['files'] = files;
 
