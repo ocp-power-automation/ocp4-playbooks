@@ -1,0 +1,17 @@
+- name: Create temporary chrony.conf file
+  template:
+    src: chrony.conf.j2
+    dest: /tmp/chrony.conf.tmp
+
+- name: slurp contents of temporary chrony.conf file
+  slurp:
+    src: /tmp/chrony.conf.tmp
+  register: chronybase64
+
+- name: Generate Chrony machineconfig
+  template:
+    src: chrony-machineconfig.j2
+    dest: "{{ workdir }}/manifests/99-{{item}}-chrony-configuration.yaml"
+  loop: 
+    - master
+    - worker

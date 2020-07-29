@@ -61,6 +61,10 @@
     line: '\1mastersSchedulable: False'
     backrefs: yes
 
+- name: Create Chrony machineconfig files for coreOS
+  import_tasks: chrony.yaml
+  when: chronyconfig.enabled
+
 - name: Create ignition files
   shell: "OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE={{ release_image_override }} openshift-install create ignition-configs --log-level {{ log_level }}"
   args:

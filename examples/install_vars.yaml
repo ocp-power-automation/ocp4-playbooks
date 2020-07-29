@@ -20,3 +20,11 @@ proxy_url: ""
 no_proxy: ""
 
 enable_local_registry: false
+
+chronyconfig:
+   enabled: false
+   content:
+     - server: ntp1.example.com
+       options: iburst
+     - server: ntp2.example.com
+       options: iburst
