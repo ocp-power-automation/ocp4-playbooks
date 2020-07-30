@@ -1,10 +1,44 @@
----
 # tasks file for ocp4 post install customizations
+- name: Install openshift python module
+  pip:
+    executable: pip3
+    name: openshift
 
-- name: Configure RHCOS kernel options via MachineConfig
-  when: rhcos_kernel_options | length > 0
-  import_tasks: kernel.yaml
+- name:
+  block:
+    - name: Pause reboot node (Machineconfig)
+      k8s:
+        merge_type: merge
+        kind: MachineConfigPool
+        name: "{{ item }}"
+        definition:
+          spec:
+            paused: true
+      loop:
+        - master
+        - worker
 
-- name: Configure Kernel tunables (sysctl) via Tuned Operator
-  when: sysctl_tuned_options
-  import_tasks: tuned.yaml
+    - name: Configure RHCOS kernel options via MachineConfig
+      when: rhcos_kernel_options | length > 0
+      import_tasks: kernel.yaml
+
+    - name: Configure Kernel tunables (sysctl) via Tuned Operator
+      when: sysctl_tuned_options
+      import_tasks: tuned.yaml
+
+    - name: Configure PowerVM RMC daemonset
+      when: powervm_rmc
+      import_tasks: powervm_rmc.yaml
+
+  always:
+    - name: UnPause reboot node (Machineconfig)
+      k8s:
+        merge_type: merge
+        kind: MachineConfigPool
+        name: "{{ item }}"
+        definition:
+          spec:
+            paused: false
+      loop:
+        - master
+        - worker
