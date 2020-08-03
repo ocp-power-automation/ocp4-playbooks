@@ -1,0 +1,79 @@
+- name: Create powervm-rmc project
+  k8s:
+    name: powervm-rmc
+    api_version: project.openshift.io/v1
+    kind: Project
+    state: present
+
+- name: Create powervm-rmc serviceaccount
+  k8s:
+    state: present
+    definition:
+      api_version: v1
+      kind: ServiceAccount
+      metadata:
+        name: powervm-rmc
+        namespace: powervm-rmc
+
+- name: Add privileged scc to powervm-rmc serviceaccount
+  shell: "oc adm policy add-scc-to-user -z powervm-rmc privileged -n powervm-rmc"
+
+- name: Deploy powervm-rmc DaemonSet
+  k8s:
+    state: present
+    definition:
+      kind: DaemonSet
+      apiVersion: apps/v1
+      metadata:
+        name: powervm-rmc
+        namespace: powervm-rmc
+      spec:
+        selector:
+          matchLabels:
+            app: powervm-rmc
+        template:
+          metadata:
+            creationTimestamp: null
+            labels:
+              app: powervm-rmc
+          spec:
+            nodeSelector:
+              kubernetes.io/arch: ppc64le
+              node.openshift.io/os_id: rhcos
+            restartPolicy: Always
+            serviceAccountName: powervm-rmc
+            hostNetwork: true
+            containers:
+              - name: powervm-rmc
+                image: 'quay.io/powercloud/rsct-ppc64le:latest'
+                ports:
+                  - name: rmc-tcp
+                    hostPort: 657
+                    containerPort: 657
+                    protocol: TCP
+                  - name: rmc-udp
+                    hostPort: 657
+                    containerPort: 657
+                    protocol: UDP
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 500Mi
+                  limits:
+                    memory: 1Gi
+                volumeMounts:
+                  - name: lib-modules
+                    mountPath: /lib/modules
+                    readOnly: true
+                securityContext:
+                  privileged: true
+                  runAsUser: 0
+            serviceAccount: powervm-rmc
+            volumes:
+              - name: lib-modules
+                hostPath:
+                  path: /lib/modules
+            tolerations:
+              - key: node-role.kubernetes.io/master
+                operator: Exists
+                effect: NoSchedule
