@@ -5,11 +5,9 @@
   import_tasks: squid.yaml
   when: setup_squid_proxy
 
-
 - name: Extract OCP4 tools
   import_tasks: extract.yaml
   when: release_image_override != ""
-
 
 - name: Skip config if install workdir exist
   stat:
@@ -27,7 +25,6 @@
   with_items:
 #  - absent
   - directory
-
 
 - name: Generate install-config.yaml
   template:
@@ -61,7 +58,7 @@
     line: '\1mastersSchedulable: False'
     backrefs: yes
 
-- name: Create Chrony machineconfig files for coreOS
+- name: Setup time synchronisation with Chrony
   import_tasks: chrony.yaml
   when: chronyconfig.enabled
 

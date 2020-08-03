@@ -9,4 +9,4 @@ no_proxy: ""
 enable_local_registry: false
 
 chronyconfig:
-   enabled: false
+   enabled: true
