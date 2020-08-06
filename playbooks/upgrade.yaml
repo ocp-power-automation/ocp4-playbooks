@@ -4,5 +4,5 @@
   tasks:
     - include_role:
         name: ocp-upgrade
-      when: upgrade_image!= ""
+      when: upgrade_version != ""
 

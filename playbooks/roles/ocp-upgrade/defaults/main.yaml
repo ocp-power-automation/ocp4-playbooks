@@ -1,7 +1,8 @@
 ---
 # defaults file
 
-upgrade_image: ""
+upgrade_version: ""
+upgrade_channel: ""
 pause_time: 90
 delay_time: 600
 

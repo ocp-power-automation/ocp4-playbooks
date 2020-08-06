@@ -1,8 +1,13 @@
 ---
 
+- name: Set upgrade channel
+  when: upgrade_channel != ""
+  shell: |
+    oc patch clusterversion/version -p '{"spec":{"channel":"{{ upgrade_channel }}"}}' --type=merge
+
 - name: Upgrade cluster
   shell: |
-    oc adm upgrade --force --to-image="{{ upgrade_image }}" --allow-explicit-upgrade
+    oc adm upgrade --to="{{ upgrade_version }}"
 
 - name: Waiting until upgrade completes
   pause:
