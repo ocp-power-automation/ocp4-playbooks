@@ -1,17 +1,72 @@
-- name: Create temporary chrony.conf file
-  template:
-    src: chrony.conf.j2
-    dest: /tmp/chrony.conf.tmp
+- name: Install chrony on bastion
+  yum:
+    name: chrony
+    state: present
 
-- name: slurp contents of temporary chrony.conf file
-  slurp:
-    src: /tmp/chrony.conf.tmp
-  register: chronybase64
+- name: Open NTP port on firewall
+  firewalld:
+      service: ntp
+      permanent: yes
+      immediate: yes
+      state: enabled
 
-- name: Generate Chrony machineconfig
-  template:
-    src: chrony-machineconfig.j2
-    dest: "{{ workdir }}/manifests/99-{{item}}-chrony-configuration.yaml"
-  loop: 
-    - master
-    - worker
+- name: Configure chrony to synchronize with ntp servers
+  lineinfile:
+    path: /etc/chrony.conf
+    regexp: '^server {{ item.server }} '
+    state: present
+    line: "server {{ item.server }} {{ item.options | default('iburst') }}"
+    insertafter: 'server '
+    backup: yes
+  loop: "{{ chronyconfig.content }}"
+  when:
+    - chronyconfig.content is defined
+    - chronyconfig.content[0].server is defined
+  notify:
+    - restart chrony
+
+- name: Remove Chrony default pool when ntp server are used
+  lineinfile:
+    path: /etc/chrony.conf
+    regexp: '^pool .*\.rhel\.pool\.ntp\.org'
+    state: absent
+    backup: yes
+  when:
+    - chronyconfig.content is defined
+    - chronyconfig.content[0].server is defined
+  notify:
+    - restart chrony
+
+- name: Allow local stratum in chrony.conf on bastion
+  lineinfile:
+    path: /etc/chrony.conf
+    regexp: '^local stratum'
+    state: present
+    line: "local stratum 10"
+    insertafter: '^#local stratum'
+    backup: yes
+  notify:
+    - restart chrony
+
+- name: Allow Cluster Network in chrony.conf on bastion
+  lineinfile:
+    path: /etc/chrony.conf
+    regexp: '^allow'
+    state: present
+    line: "allow {{ item }}"
+    insertafter: '^#allow'
+    backup: yes
+  loop: "{{ chronyconfig.allow }}"
+  when:
+    - chronyconfig.allow is defined
+    - chronyconfig.allow[0] is defined
+  notify:
+    - restart chrony
+
+- name: Copy machineconfig files generated from helpernode
+  copy:
+    src: "{{ item }}"
+    dest: "{{ workdir }}/manifests" 
+    remote_src: yes
+  with_fileglob:
+    - "../../ocp4-helpernode/machineconfig/*-chrony-configuration.yaml"

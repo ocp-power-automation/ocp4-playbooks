@@ -25,8 +25,9 @@ Role Variables
 | proxy_url               | no       | ""             | Proxy url eg: http://[user:passwd@]server:port (NA when setup_squid_proxy: true)|
 | no_proxy                | no       | ""             | Comma seperated string of domains/cidr to exclude proxy |
 | enable_local_registry   | no       | false          | Set to true to enable usage of local registry for restricted network install |
-| chronyconfig.enabled    | no       | flase          | Set to true to enable chrony configuration on the coreOS node during install |
-| chronyconfig.content    | no       | ""             | List of time servers and options pair (see chronyconfig examples) |
+| chronyconfig.enabled    | no       | true           | Set to true to enable chrony configuration on the bastion node during installation. This also configure the bastion as a NTP server for the cluster. |
+| chronyconfig.content    | no       | ""             | List of time NTP servers and options pair (see chronyconfig examples). If empty, bastion will try sync with some default ntp server (internet) AND local HW clock (with higher stratum). |
+| chronyconfig.allow      | no       | ""             | List of network cidr (X.X.X.X/Y) allowed to sync with bastion configured as NTP server |
 
 *chronyconfig variable example *
 
@@ -38,6 +39,9 @@ chronyconfig:
        options: iburst
      - server: ntp2.example.com
        options: iburst
+    allow:
+      - 10.1.1.1/24
+      - 10.1.2.3/16
 ```
 
 Dependencies
