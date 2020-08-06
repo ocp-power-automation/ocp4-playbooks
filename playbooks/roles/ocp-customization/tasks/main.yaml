@@ -1,4 +1,12 @@
 # tasks file for ocp4 post install customizations
+
+- name: Install python devel
+  package:
+    name:
+      - python3
+      - python3-devel
+    state: present
+
 - name: Install openshift python module
   pip:
     executable: pip3
