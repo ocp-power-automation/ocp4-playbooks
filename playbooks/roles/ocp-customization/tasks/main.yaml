@@ -1,7 +1,12 @@
 # tasks file for ocp4 post install customizations
+- name: Install requiremnt fir pip python-devel
+  yum:
+    name: python-devel
+    state: present
+
 - name: Install openshift python module
   pip:
-    executable: pip3
+#    executable: pip3
     name: openshift
 
 - name:
