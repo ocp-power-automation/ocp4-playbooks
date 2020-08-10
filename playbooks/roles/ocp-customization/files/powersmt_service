@@ -1,0 +1,8 @@
+[Unit]
+Description=SMT control via k8s SMT label
+
+[Service]
+ExecStart=/usr/local/bin/powersmt
+
+[Install]
+WantedBy=multi-user.target

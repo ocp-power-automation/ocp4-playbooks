@@ -1,0 +1,34 @@
+- name: Copy files to bastion
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp"
+  loop:
+    - powersmt
+    - powersmt_service
+
+- name: slurp powersmt to base64
+  slurp:
+    src: "/tmp/powersmt"
+  register: powersmt_b64
+
+- name: slurp powersmt_service to base64
+  slurp:
+    src: "/tmp/powersmt_service"
+  register: powersmt_service_b64
+
+- name: Create SMT via Label options CRDs
+  vars:
+    role: '{{ item }}'
+  template:
+    src: 90-smt-via-label.yaml
+    dest: "{{ workdir }}/90-{{ item }}-smt-via-label.yaml"
+  with_items:
+    - master
+    - worker
+
+- name: Apply the MachineConfig CRDs
+  shell: "oc apply -f {{ workdir }}/90-{{ item }}-smt-via-label.yaml"
+  with_items:
+    - master
+    - worker
+

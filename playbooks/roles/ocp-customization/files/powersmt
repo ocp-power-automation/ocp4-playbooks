@@ -1,0 +1,64 @@
+#!/bin/bash
+export PATH=/root/.local/bin:/root/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+export KUBECONFIG=/var/lib/kubelet/kubeconfig
+COREPS=$(/bin/lscpu | /bin/awk -F: ' $1 ~ /^Core\(s\) per socket$/ {print $2}'|/bin/xargs)
+SOCKETS=$(/bin/lscpu | /bin/awk -F: ' $1 ~ /^Socket\(s\)$/ {print $2}'|/bin/xargs)
+let TOTALCORES=$COREPS*$SOCKETS
+MAXTHREADS=$(/bin/lscpu | /bin/awk -F: ' $1 ~ /^CPU\(s\)$/ {print $2}'|/bin/xargs)
+let MAXSMT=$MAXTHREADS/$TOTALCORES
+CURRENTSMT=$(/bin/lscpu | /bin/awk -F: ' $1 ~ /^Thread\(s\) per core$/ {print $2}'|/bin/xargs)
+
+while :
+do
+  SMTLABEL=$(/bin/oc get node $HOSTNAME -L SMT --no-headers |/bin/awk '{print $6}')
+  if [[ -n $SMTLABEL ]]
+    then
+      case $SMTLABEL in
+        1) TARGETSMT=1
+      ;;
+        2) TARGETSMT=2
+      ;;
+        4) TARGETSMT=4
+      ;;
+        8) TARGETSMT=8
+      ;;
+        *) TARGETSMT=$CURRENTSMT ; echo "SMT value must be 1, 2, 4, or 8 and smaller than Maximum SMT."
+      ;;
+      esac
+    else
+      TARGETSMT=$MAXSMT
+  fi
+
+  CURRENTSMT=$(/bin/lscpu | /bin/awk -F: ' $1 ~ /^Thread\(s\) per core$/ {print $2}'|/bin/xargs)
+
+  if [[ $CURRENTSMT -ne $TARGETSMT ]]
+    then
+      INITONTHREAD=0
+      INITOFFTHREAD=$TARGETSMT
+      if [[ $MAXSMT -ge $TARGETSMT ]]
+        then
+          while [[ $INITONTHREAD -lt $MAXTHREADS ]]
+          do
+            ONTHREAD=$INITONTHREAD
+            OFFTHREAD=$INITOFFTHREAD
+
+            while [[ $ONTHREAD -lt $OFFTHREAD ]]
+            do
+              /bin/echo 1 > /sys/devices/system/cpu/cpu$ONTHREAD/online
+              let ONTHREAD=$ONTHREAD+1
+            done
+            let INITONTHREAD=$INITONTHREAD+$MAXSMT
+            while [[ $OFFTHREAD -lt $INITONTHREAD ]]
+            do
+              /bin/echo 0 > /sys/devices/system/cpu/cpu$OFFTHREAD/online
+              let OFFTHREAD=$OFFTHREAD+1
+            done
+            let INITOFFTHREAD=$INITOFFTHREAD+$MAXSMT
+          done
+        systemctl restart kubelet
+        else
+          echo "Target SMT must be smaller or equal than Maximum SMT supported"
+      fi
+  fi
+  /bin/sleep 30
+done

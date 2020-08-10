@@ -5,4 +5,4 @@ workdir: ~/ocp4-workdir
 rhcos_kernel_options: []
 sysctl_tuned_options: false
 powervm_rmc: true
-
+smt_control: false

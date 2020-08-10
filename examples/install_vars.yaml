@@ -28,3 +28,6 @@ chronyconfig:
        options: iburst
      - server: ntp2.example.com
        options: iburst
+
+powervm_rmc: true
+smt_control: false

@@ -1,0 +1,28 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: '{{ role }}'
+  name: 90-{{ role }}-smt
+spec:
+  config:
+    ignition:
+      version: 2.2.0
+    storage:
+      files:
+        - path: /usr/local/bin/powersmt
+          overwrite: true
+          mode: 0700
+          filesystem: root
+          contents:
+            source: data:text/plain;charset=utf-8;base64,{{ powersmt_b64.content }}
+        - path: /etc/systemd/system/powersmt.service
+          overwrite: true
+          mode: 0644
+          filesystem: root
+          contents:
+            source: data:text/plain;charset=utf-8;base64,{{ powersmt_service_b64.content }}
+    systemd:
+      units:
+        - name: powersmt.service
+          enabled: true

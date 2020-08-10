@@ -38,6 +38,11 @@
       when: powervm_rmc
       import_tasks: powervm_rmc.yaml
 
+    - name: Allow SMT configuration via node label (SMT=X)
+      when: ansible_architecture == "ppc64le"
+      import_tasks: smt_configuration.yaml
+      when: smt_control
+
   always:
     - name: UnPause reboot node (Machineconfig)
       k8s:
