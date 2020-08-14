@@ -1,19 +1,6 @@
 ---
 # tasks file for ocp4 config
 
-- name: Change zonefile permision (temp fix)
-  file:
-    path: "{{ item }}"
-    mode: '0644'
-  with_items:
-    - "/var/named/zonefile.db"
-    - "/var/named/reverse.db"
-
-- name: restart bind (temp fix)
-  service:
-    name: named
-    state: restarted
-
 - name: Setup Squid proxy server
   import_tasks: squid.yaml
   when: setup_squid_proxy
