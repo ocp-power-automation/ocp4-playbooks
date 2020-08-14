@@ -1,0 +1,7 @@
+---
+# file: customization.yml
+
+- name: OCP post-install customizations
+  hosts: bastion
+  roles:
+  - ocp-customization
