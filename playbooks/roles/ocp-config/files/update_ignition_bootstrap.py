@@ -7,30 +7,6 @@ with open('bootstrap.ign', 'r') as f:
 
 files = ignition['storage'].get('files', [])
 
-dhcp_client_conf_b64 = base64.standard_b64encode(b'[main]\ndhcp=dhclient\n').decode().strip()
-files.append(
-{
-    'path': '/etc/NetworkManager/conf.d/dhcp-client.conf',
-    'mode': 420,
-    'contents': {
-        'source': 'data:text/plain;charset=utf-8;base64,' + dhcp_client_conf_b64,
-        'verification': {}
-        },
-    'filesystem': 'root'
-})
-
-dhclient_cont_b64 = base64.standard_b64encode(b'send dhcp-client-identifier = hardware;\nprepend domain-name-servers 127.0.0.1;\n').decode().strip()
-files.append(
-{
-    'path': '/etc/dhcp/dhclient.conf',
-    'mode': 420,
-    'contents': {
-        'source': 'data:text/plain;charset=utf-8;base64,' + dhclient_cont_b64,
-        'verification': {}
-        },
-    'filesystem': 'root'
-})
-
 if os.path.isfile('/tmp/chrony.conf.tmp'):
     with open("/tmp/chrony.conf.tmp", "rb") as chronyconf:
         chrony_b64 = base64.standard_b64encode(chronyconf.read()).decode().strip()
