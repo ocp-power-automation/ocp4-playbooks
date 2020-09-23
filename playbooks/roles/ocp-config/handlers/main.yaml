@@ -4,13 +4,16 @@
   service:
     name: squid
     state: restarted
+    enabled: yes
 
 - name: restart firewalld
   service:
     name: firewalld
     state: restarted
+    enabled: yes
 
 - name: restart chrony
   service:
     name: chronyd
     state: restarted
+    enabled: yes
