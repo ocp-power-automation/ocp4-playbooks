@@ -6,7 +6,7 @@ This module will create the ignition files for the cluster nodes. All the igniti
 Requirements
 ------------
 
- - All the required configurations are done on the bastion node eg: HTTP, openshift-install binary is available on $PATH. This can also be achieved by using [ocp4-helpernode](https://github.com/RedHatOfficial/ocp4-helpernode) playbook.
+ - All the required configurations are done on the bastion node using [helpernode playbook](https://github.com/RedHatOfficial/ocp4-helpernode).
  - Master count can be extracted from host group 'masters'.
  - Updated pull secret file with registry credentials located at `~/.openshift/pull-secret-updated` (Required for restricted network install)
  - Registry certificate file located at `/opt/registry/certs/domain.crt` (Required for restricted network install)
