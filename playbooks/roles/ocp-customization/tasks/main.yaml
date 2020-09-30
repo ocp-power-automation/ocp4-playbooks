@@ -5,6 +5,7 @@
     name:
       - python3
       - python3-devel
+      - gcc
     state: present
 
 - name: Install openshift python module
