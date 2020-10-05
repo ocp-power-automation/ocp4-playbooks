@@ -1,5 +1,7 @@
 [bastion]
-localhost ansible_connection=local
+B1.B1.B1.B1 ansible_connection=ssh ansible_user=root
+# more than 1 entry for bastion group implies HA setup
+# B2.B2.B2.B2 ansible_connection=ssh ansible_user=root
 
 [bootstrap]
 X.X.X.X ansible_connection=ssh ansible_user=core

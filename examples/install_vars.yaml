@@ -28,3 +28,5 @@ chronyconfig:
        options: iburst
      - server: ntp2.example.com
        options: iburst
+
+# bastion_vip: "B.B.B.B"
