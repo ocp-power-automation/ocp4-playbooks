@@ -1,5 +1,6 @@
 ---
 # file: install.yml
+
 - name: Create OCP config
   hosts: bastion
   roles:
@@ -22,7 +23,7 @@
   - nodes-config
 
 - name: Wait for bootstrap
-  hosts: bastion
+  hosts: bastion[0]
   tasks:
   - name: Wait for bootstrap complete
     shell: "openshift-install wait-for bootstrap-complete --log-level {{ log_level }}"
@@ -36,14 +37,17 @@
   roles:
   - nodes-config
 
-- name: Install OCP
-  hosts: bastion
+- name: Install and Customize OCP
+  hosts: bastion[0]
   roles:
   - ocp-install
+  - ocp-customization
   vars:
     worker_count: "{{ groups['workers'] | length }}"
 
-- name: OCP post-install customizations
-  hosts: bastion
+- name: OCP post-install HA
+  hosts: bastion[1:]
   roles:
-  - ocp-customization
+  - ocp-ha
+  vars:
+    bastion_master: "{{ groups['bastion'][0] }}"

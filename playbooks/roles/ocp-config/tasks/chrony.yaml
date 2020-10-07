@@ -62,11 +62,3 @@
     - chronyconfig.allow[0] is defined
   notify:
     - restart chrony
-
-- name: Copy machineconfig files generated from helpernode
-  copy:
-    src: "{{ item }}"
-    dest: "{{ workdir }}/manifests" 
-    remote_src: yes
-  with_fileglob:
-    - "../../ocp4-helpernode/machineconfig/*-chrony-configuration.yaml"

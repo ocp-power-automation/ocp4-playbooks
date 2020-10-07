@@ -1,13 +1,25 @@
 # Introduction
 The playbooks are used for installation of OCP on Power and other post install customizations.
-The playbooks are used with the following projects [1](https://github.com/ocp-power-automation/ocp4_upi_powervm)
-and [2](https://github.com/ocp-power-automation/ocp4_upi_kvm)
+The playbooks are used with [PowerVS](https://github.com/ocp-power-automation/ocp4_upi_powervs), [PowerVC](https://github.com/ocp-power-automation/ocp4_upi_powervm)
+and [KVM](https://github.com/ocp-power-automation/ocp4_upi_kvm) projects.
 
 ## Assumptions
 
  - A bastion/helper node is already created where the playbooks would run.
- - The required services are configured on the bastion/helper node eg: HTTP, HAProxy, DNS, DHCP, etc.
+ - The required services are configured on the bastion/helper node using [helpernode playbook](https://github.com/RedHatOfficial/ocp4-helpernode).
  - The cluster nodes are already created.
+
+## Bastion HA setup
+
+We can have multiple bastion nodes as part of the OpenShift 4.X setup. Ensure that all the required services are configured on all the bastion nodes. Also, keepalived service should be configured and running.
+
+To use this playbook for bastion HA you need to:
+1. Run helpernode playbook with [HA configurations](https://github.com/RedHatOfficial/ocp4-helpernode/blob/master/docs/examples/vars-ha-ppc64le.yaml#L48-L57).
+1. Use `bastion_vip` variable with keepalived vrrp address.
+1. Add `bastion` host group entries with all bastion nodes in `examples/inventory`.
+
+The OpenShift install commands will always run on the first bastion. Additional services such as squid proxy, chrony, etc. will be configured on all nodes. The auth directory and ignition files will be available on all nodes once the installation complete.
+
 
 ## Set up the required variables
 

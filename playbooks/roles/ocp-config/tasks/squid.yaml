@@ -27,4 +27,4 @@
 
 - name: Set proxy details
   set_fact:
-    squid_proxy_url: "http://{{ ansible_host }}:{{ squid_http_port }}"
+    squid_proxy_url: "http://{{ bastion_vip | default(ansible_host) }}:{{ squid_http_port }}"
