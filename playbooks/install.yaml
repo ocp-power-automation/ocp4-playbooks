@@ -19,6 +19,8 @@
   hosts: masters
   gather_facts: no
   any_errors_fatal: true
+  serial:
+  - 1
   roles:
   - nodes-config
 
@@ -34,6 +36,8 @@
   hosts: workers
   gather_facts: no
   any_errors_fatal: true
+  serial:
+  - 1
   roles:
   - nodes-config
 
