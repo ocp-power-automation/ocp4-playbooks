@@ -68,7 +68,6 @@
                 securityContext:
                   privileged: true
                   runAsUser: 0
-            serviceAccount: powervm-rmc
             volumes:
               - name: lib-modules
                 hostPath:
