@@ -21,6 +21,7 @@ Role Variables
 | log_level               | no       | info           | Option --log-level in openshift-install cmd |
 | release_image_override  | no       | ""             | OCP image overide variable                  |
 | master_count            | yes      |                | Number of master nodes                      |
+| worker_count            | yes      |                | Number of worker nodes                      |
 | setup_squid_proxy       | no       | false          | Flag for setting up squid proxy server on bastion node |
 | proxy_url               | no       | ""             | Proxy url eg: http://[user:passwd@]server:port (NA when setup_squid_proxy: true)|
 | no_proxy                | no       | ""             | Comma seperated string of domains/cidr to exclude proxy |
@@ -59,6 +60,7 @@ Example Playbook
       - ocp-config
       vars:
         master_count: "{{ groups['masters'] | length }}"
+        worker_count: "{{ groups['workers'] | default([]) | length }}"
 
 License
 -------
