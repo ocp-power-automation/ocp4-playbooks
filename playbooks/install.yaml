@@ -7,6 +7,7 @@
   - ocp-config
   vars:
     master_count: "{{ groups['masters'] | length }}"
+    worker_count: "{{ groups['workers'] | default([]) | length }}"
 
 - name: Check and configure bootstrap node
   hosts: bootstrap
@@ -47,7 +48,7 @@
   - ocp-install
   - ocp-customization
   vars:
-    worker_count: "{{ groups['workers'] | length }}"
+    worker_count: "{{ groups['workers'] | default([]) | length }}"
 
 - name: OCP post-install HA
   hosts: bastion[1:]

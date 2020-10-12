@@ -18,6 +18,7 @@
   until: lookup('pipe','oc get nodes | grep -w worker | grep -w Ready | wc -l') == worker_count
   retries: 30
   delay: 60
+  when: worker_count|int > 0
 
 - name: Wait for install-complete
   shell: "openshift-install wait-for install-complete --log-level {{ log_level }}"

@@ -68,6 +68,7 @@
       regexp: '^(.*)mastersSchedulable: true'
       line: '\1mastersSchedulable: False'
       backrefs: yes
+    when: worker_count|int > 0
 
   - name: Copy machineconfig files generated from helpernode
     copy:
