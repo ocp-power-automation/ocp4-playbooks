@@ -1,7 +1,7 @@
 ---
 # Update dhcpd config to not deny unknown clients and use only static entries
 - name: Find DHCP pool block
-  shell: grep 'pool {' /etc/
+  shell: grep 'pool {' /etc/dhcp/dhcpd.conf
   ignore_errors: yes
   register: dhcp_pool
 
