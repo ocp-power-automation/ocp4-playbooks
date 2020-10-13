@@ -1,0 +1,24 @@
+---
+# Update dhcpd config to not deny unknown clients and use only static entries
+- name: Find DHCP pool block
+  shell: grep 'pool {' /etc/dhcp/dhcpd.conf
+  ignore_errors: yes
+  register: dhcp_pool
+
+- name: Update DHCP server config
+  when: dhcp_pool.rc == 0
+  block:
+  - name: Remove pool, range and deny statements
+    shell: |
+      sed -i.bak '/pool {/d' /etc/dhcp/dhcpd.conf
+      sed -i '/range /d' /etc/dhcp/dhcpd.conf
+      sed -i '$d' /etc/dhcp/dhcpd.conf
+      sed -i 's/deny unknown-clients/#deny unknown-clients/' /etc/dhcp/dhcpd.conf
+    args:
+      warn: false
+
+  - name: restart dhcpd
+    service:
+      name: dhcpd
+      state: restarted
+      enabled: yes
