@@ -1,0 +1,6 @@
+---
+- name: PowerVS specific configuration
+  hosts: bastion
+  roles:
+  - powervs-nodes-config
+

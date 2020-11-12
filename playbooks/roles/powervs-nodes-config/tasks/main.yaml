@@ -1,0 +1,24 @@
+---
+# tasks file for powervs nodes configuration
+
+- name: Get Connection UUID
+  shell: |
+    nmcli -g uuid,device con | grep {{ ocp_node_net_intf }} | awk -F: '{ print $1 }'
+  register: con_uuid
+
+- name: Add route to connection
+  shell: |
+    nmcli connection modify {{ con_uuid.stdout }} +ipv4.routes "{{ ibm_cloud_dl_endpoint_net_cidr }} {{ ocp_node_net_gw }}"
+    nmcli connection up {{ con_uuid.stdout }}
+
+- name: Retrieve proxy details
+  shell: |
+    oc get proxy/cluster -o template --template {{'{{'}}.spec.noProxy{{'}}'}}
+  register: proxy
+  run_once: true
+
+- name: Switch to classic infrastructure proxy
+  shell: |
+    oc patch proxy/cluster --type merge --patch '{"spec":{"httpProxy": "{{ ibm_cloud_http_proxy }}", "httpsProxy": "{{ ibm_cloud_http_proxy }}", "noProxy": "{{ proxy.stdout }},{{ ibm_cloud_dl_endpoint_net_cidr }}" }}'
+  run_once: true
+ 
