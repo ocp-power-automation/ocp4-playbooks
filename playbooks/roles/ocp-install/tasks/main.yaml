@@ -40,18 +40,29 @@
         openssl s_client -connect $MCS  -showcerts                      | \
         awk '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/' | \
         base64 --wrap=0                                                 | \
-        tee ./api-int.base64 && sed --regexp-extended --in-place=.backup "s%base64,[^,]+%base64,$(cat ./api-int.base64)\"%" ./worker.ign
+        tee api-int.base64 && sed --regexp-extended --in-place=.backup "s%base64,[^,]+%base64,$(cat api-int.base64)\"%" openstack-upi/worker.ign
     
         # Copy Ignition Files to HTTP server
         cp openstack-upi/worker.ign /var/www/html/ignition
         chmod 777 /var/www/html/ignition/*.ign
     fi
+
+- name: total workers to be instantiated
+  shell: cat /etc/dhcp/dhcpd.conf | grep worker | wc -l | tr -d ' '
+  register: total_count
+
+- debug: 
+    msg: "worker_count is {{ worker_count }}"
+         
+- debug: 
+    msg: "total_count is {{ total_count }}"
+  
     
 # Run approve command till we have all workers ready. 'xargs -r ' is used to ignore empty stdin.
 - name: Approve Worker CSRs
   shell: |
     oc get csr -ojson | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs -r oc adm certificate approve
-  until: lookup('pipe','oc get nodes | grep -w worker | grep -w Ready | grep  -v "NotReady" |wc -l') == worker_count
+  until: lookup('pipe','oc get nodes | grep -w worker | grep -w Ready | grep  -v "NotReady" |wc -l') == total_count
   retries: 30
   delay: 60
   when: worker_count|int > 0
