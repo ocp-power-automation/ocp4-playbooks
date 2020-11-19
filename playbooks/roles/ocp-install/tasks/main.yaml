@@ -49,7 +49,10 @@
 
 - name: total workers to be instantiated
   shell: cat /etc/dhcp/dhcpd.conf | grep worker | wc -l | tr -d ' '
-  register: total_count
+  register: total_count_str
+
+- set_fact:
+    total_count={{ total_count_str.stdout }}
 
 - debug: 
     msg: "worker_count is {{ worker_count }}"
@@ -65,7 +68,7 @@
   until: lookup('pipe','oc get nodes | grep -w worker | grep -w Ready | grep  -v "NotReady" |wc -l') == total_count
   retries: 30
   delay: 60
-  when: worker_count|int > 0
+  when: total_count|int > 0
 
 - name: Wait for install-complete
   shell: "openshift-install wait-for install-complete --log-level {{ log_level }}"
