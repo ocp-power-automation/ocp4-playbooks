@@ -1,23 +1,44 @@
 ---
 
-- name: Set upgrade channel
-  when: upgrade_channel != ""
-  shell: |
-    oc patch clusterversion/version -p '{"spec":{"channel":"{{ upgrade_channel }}"}}' --type=merge
+- name: Upgrade ocp to a stable version
+  block:
+     - name: Set upgrade channel
+       when: upgrade_channel != ""
+       shell: |
+         oc patch clusterversion/version -p '{"spec":{"channel":"{{ upgrade_channel }}"}}' --type=merge
 
-- name: Upgrade cluster
-  shell: |
-    oc adm upgrade --to="{{ upgrade_version }}"
+     - name: Upgrade cluster
+       shell: |
+         oc adm upgrade --to="{{ upgrade_version }}"
 
-- name: Waiting until upgrade completes
-  pause:
-    minutes: "{{ pause_time }}"
+     - name: Waiting until upgrade completes
+       pause:
+         minutes: "{{ pause_time }}"
 
-- name: Check for upgrade completion
-  shell: |
-    oc get clusterversion -o json|jq ".items[0].status.history[0].state"
-  register: state
-  until: state.stdout | replace('\"', '') == "Completed"
-  retries: 5
-  delay: "{{ delay_time }}"
+     - name: Check for upgrade completion
+       shell: |
+         oc get clusterversion -o json|jq ".items[0].status.history[0].state"
+       register: state
+       until: state.stdout | replace('\"', '') == "Completed"
+       retries: 5
+       delay: "{{ delay_time }}"
+  when: upgrade_version != "" and upgrade_image == ""
 
+- name: Upgrade ocp using a release image
+  block:
+     - name: Upgrade cluster
+       shell: |
+         oc adm upgrade --force --to-image="{{ upgrade_image }}" --allow-explicit-upgrade
+
+     - name: Waiting until upgrade completes
+       pause:
+         minutes: "{{ pause_time }}"
+
+     - name: Check for upgrade completion
+       shell: |
+         oc get clusterversion -o json|jq ".items[0].status.history[0].state"
+       register: state
+       until: state.stdout | replace('\"', '') == "Completed"
+       retries: 5
+       delay: "{{ delay_time }}"
+  when: upgrade_image != ""
