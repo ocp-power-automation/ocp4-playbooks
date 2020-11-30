@@ -17,7 +17,7 @@
     DOMAIN=${hostname%"-bastion-0.ibm.com"}
 
     # check if the cluster is more than 24 hrs old
-    if ( ! type -P oc ); then exit 0; fi
+    if ( type -P oc ); then 
       # get the cluster create time in seconds
       oc get -o json clusterversion version > /tmp/test.$$ 2> /dev/null
       tmstmp_str=$(cat /tmp/test.$$ | jq -r '.metadata.creationTimestamp')
@@ -45,6 +45,7 @@
         # Copy Ignition Files to HTTP server
         cp openstack-upi/worker.ign /var/www/html/ignition
         chmod 777 /var/www/html/ignition/*.ign
+      fi
     fi
 
 - name: total workers to be instantiated
