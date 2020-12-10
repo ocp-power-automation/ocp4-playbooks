@@ -28,3 +28,17 @@
 - name: Set proxy details
   set_fact:
     squid_proxy_url: "http://{{ bastion_vip | default(ansible_host) }}:{{ squid_http_port }}"
+
+- name: Create squid dropin directory
+  file:
+    path: /etc/systemd/system/squid.service.d
+    state: directory
+    mode: 0755
+  become: true
+
+- name: Copy restart conf file to the squid dropin directory
+  copy:
+    src: ../files/restart.conf
+    dest: /etc/systemd/system/squid.service.d/restart.conf
+  notify:
+    - restart squid

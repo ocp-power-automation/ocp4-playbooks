@@ -62,3 +62,17 @@
     - chronyconfig.allow[0] is defined
   notify:
     - restart chrony
+
+- name: Create chrony dropin directory
+  file:
+    path: /etc/systemd/system/chronyd.service.d
+    state: directory
+    mode: 0755
+  become: true
+
+- name: Copy restart conf file to the chrony dropin directory
+  copy:
+    src: ../files/restart.conf
+    dest: /etc/systemd/system/chronyd.service.d/restart.conf
+  notify:
+    - restart chrony
