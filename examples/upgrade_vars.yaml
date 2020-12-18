@@ -1,6 +1,7 @@
 ---
 upgrade_version: ""  #OCP upgrade version eg. 4.5.4
 upgrade_channel: ""  #OCP channel having required upgrade version available for cluster upgrade (stable-4.x, fast-4.x, candidate-4.x) eg. stable-4.5
+upgrade_image: ""    #OCP upgrade image e.g. "quay.io/openshift-release-dev/ocp-release-nightly@sha256:xxxxx"
 pause_time: 90     #Pauses playbook execution for a set amount of time in minutes
 delay_time: 600    #Number of seconds to wait before starting to poll
 
