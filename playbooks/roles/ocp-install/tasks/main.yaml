@@ -11,6 +11,8 @@
     src: "{{ workdir }}/auth/kubeconfig"
     dest: "~/.kube/config"
 
+- include_tasks: checkcert.yaml
+
 # Run approve command till we have all workers ready. 'xargs -r ' is used to ignore empty stdin.
 - name: Approve Worker CSRs
   shell: |
