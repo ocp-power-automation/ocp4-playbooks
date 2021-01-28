@@ -12,6 +12,18 @@
   with_items:
   - directory
 
+- name: local-registry service
+  block:
+  - name: Restart local-registry service
+    service:
+      name: local-registry
+      state: restarted
+
+  - name: Wait for local-registry to restart
+    wait_for:
+      timeout: 15
+  when: enable_local_registry
+
 - name: Extract OCP4 tools from release image ( local-registry )
   when: enable_local_registry
   shell: |
