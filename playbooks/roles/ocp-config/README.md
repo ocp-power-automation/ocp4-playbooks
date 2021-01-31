@@ -30,6 +30,7 @@ Role Variables
 | chronyconfig.content    | no       | ""             | List of time NTP servers and options pair (see chronyconfig examples). If empty, bastion will try sync with some default ntp server (internet) AND local HW clock (with higher stratum). |
 | chronyconfig.allow      | no       | ""             | List of network cidr (X.X.X.X/Y) allowed to sync with bastion configured as NTP server |
 | dhcp_shared_network     | no       |                | Flag to update DHCP server work on a shared network. (Neither ACK nor NACK unknown clients) |
+| cni_network_provider    | no       | OpenshiftSDN   | Sets the default Container Network Interface (CNI) network provider for the cluster |
 
 *chronyconfig variable example *
 

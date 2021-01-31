@@ -10,3 +10,5 @@ enable_local_registry: false
 
 chronyconfig:
    enabled: true
+
+cni_network_provider: OpenshiftSDN
