@@ -11,6 +11,11 @@ Use this to [add kernel arguments](https://docs.openshift.com/container-platform
 
 Use this to modify kernel tunables for nodes/pods via [tuned operator](https://docs.openshift.com/container-platform/4.3/scalability_and_performance/using-node-tuning-operator.html).
 
+**3. RSCT/RMC**
+
+Use this to deploy containerized version of [RSCT](https://www.ibm.com/support/knowledgecenter/SGVKBA) on every OCP node running on PowerVM infrastructure.  
+This is enabled by default when deploying OCP in PowerVM or PowerVS
+
 Requirements
 ------------
 
@@ -56,5 +61,5 @@ See LICENCE.txt
 Author Information
 ------------------
 
-Yussuf Shaikh (yussuf@us.ibm.com)
-Pradipta Kr. Banerjee (bpradipt@in.ibm.com)
+- Yussuf Shaikh (yussuf@us.ibm.com)
+- Pradipta Kr. Banerjee (bpradipt@in.ibm.com)
