@@ -14,7 +14,7 @@ Use this to modify kernel tunables for nodes/pods via [tuned operator](https://d
 **3. RSCT/RMC**
 
 Use this to deploy containerized version of [RSCT](https://www.ibm.com/support/knowledgecenter/SGVKBA) on every OCP node running on PowerVM infrastructure.  
-This is enabled by default when deploying OCP in PowerVM or PowerVS
+This is enabled by default when deploying OCP in PowerVM or PowerVS. Follow the instructions provided [here](/docs/rsct-deploy.md) to deploy RSCT on an existing OCP cluster. 
 
 Requirements
 ------------
