@@ -1,22 +1,16 @@
 ---
 
-- name: Fetch cluster operators details
-  shell: "oc get co"
-  register: oplog
-  until: "'AVAILABLE' in oplog.stdout"
-  retries: 3
-  delay: 3
-
-- name: Process cluster operators details
-  shell: |
-    echo "{{ oplog.stdout }}" | awk '/PROGRESSING/,EOF {print $4}' | grep 'True' | wc -l
-    echo "{{ oplog.stdout }}" | awk '/DEGRADED/,EOF {print $5}' | grep 'True' | wc -l
-  register: opcount
+- name: Check all co are in 'Available' state and not in 'Progressing' or 'Degraded' state
+  shell:  oc get co  --no-headers | awk '{ print $3 $4 $5 }' | grep -w  -v TrueFalseFalse  |  wc -l 
+  register: cocount
+  until: 0 == cocount.stdout|int
+  retries: 6
+  delay: 300
 
 - name: Fail upgrade process incase cluster state is unhealthy
   fail:
     msg: The current cluster state is unhealthy, upgrading it is not recommended. Please run 'oc get co' command for more details or try upgrade after sometime.
-  when: opcount.stdout_lines[0]|int > 0 or opcount.stdout_lines[1]|int > 0
+  when: cocount.stdout|int > 0
 
 - name: Upgrade ocp to a stable version
   block:
