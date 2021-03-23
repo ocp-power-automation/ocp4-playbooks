@@ -31,6 +31,7 @@ Role Variables
 | rhcos_kernel_options    | no       | []             | List of kernel options for RHCOS nodes eg: ["slub_max_order=0","loglevel=7"] |
 | sysctl_tuned_options    | no       | false       | Set to true to apply sysctl options via tuned operator |
 | powervm_rmc             | no       | true           | Set to true to deploy RMC daemonset on Node with arch ppc64le |
+| rsct_image              | no       | quay.io/powercloud/rsct-ppc64le:latest | Change to your own registry if you install without internet connection |
 
 
 If `sysctl_tuned_options` is true then the following variables are must and should be set in [vars/tuned.yaml](./vars/tuned.yaml)
