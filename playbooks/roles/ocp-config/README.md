@@ -31,6 +31,7 @@ Role Variables
 | chronyconfig.allow      | no       | ""             | List of network cidr (X.X.X.X/Y) allowed to sync with bastion configured as NTP server |
 | dhcp_shared_network     | no       |                | Flag to update DHCP server work on a shared network. (Neither ACK nor NACK unknown clients) |
 | cni_network_provider    | no       | OpenshiftSDN   | Sets the default Container Network Interface (CNI) network provider for the cluster |
+| cni_network_mtu         | no       |                | MTU value to assign to the CNI network. Recommended values for OpenshiftSDN: <NIC MTU> - 50; OVNKubernetes: <NIC MTU> - 100 |
 
 *chronyconfig variable example *
 
