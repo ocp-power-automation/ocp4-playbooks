@@ -54,6 +54,12 @@
     args:
       chdir: "{{ workdir }}"
 
+  - name: Setup network configuration
+    template:
+      src: ../templates/cluster-network-03-config.yml.j2
+      dest: "{{ workdir }}/manifests/cluster-network-03-config.yml"
+    when: cni_network_mtu is defined
+
   - name: Remove the machine yaml files
     file:
       path: "{{ item }}"
