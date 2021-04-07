@@ -82,7 +82,7 @@
       dest: "{{ workdir }}/manifests"
       remote_src: yes
     with_fileglob:
-      - "/machineconfig/*-chrony-configuration.yaml"
+      - "../../../../../ocp4-helpernode/machineconfig/*-chrony-configuration.yaml"
     when: chronyconfig.enabled
 
   - name: Create ignition files
