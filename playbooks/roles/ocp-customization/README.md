@@ -11,6 +11,11 @@ Use this to [add kernel arguments](https://docs.openshift.com/container-platform
 
 Use this to modify kernel tunables for nodes/pods via [tuned operator](https://docs.openshift.com/container-platform/4.3/scalability_and_performance/using-node-tuning-operator.html).
 
+**3. RSCT/RMC**
+
+Use this to deploy containerized version of [RSCT](https://www.ibm.com/support/knowledgecenter/SGVKBA) on every OCP node running on PowerVM infrastructure.  
+This is enabled by default when deploying OCP in PowerVM or PowerVS. Follow the instructions provided [here](/docs/rsct-deploy.md) to deploy RSCT on an existing OCP cluster. 
+
 Requirements
 ------------
 
@@ -26,6 +31,7 @@ Role Variables
 | rhcos_kernel_options    | no       | []             | List of kernel options for RHCOS nodes eg: ["slub_max_order=0","loglevel=7"] |
 | sysctl_tuned_options    | no       | false       | Set to true to apply sysctl options via tuned operator |
 | powervm_rmc             | no       | true           | Set to true to deploy RMC daemonset on Node with arch ppc64le |
+| rsct_image              | no       | quay.io/powercloud/rsct-ppc64le:latest | Change to your own registry if you install without internet connection |
 
 
 If `sysctl_tuned_options` is true then the following variables are must and should be set in [vars/tuned.yaml](./vars/tuned.yaml)
@@ -56,5 +62,5 @@ See LICENCE.txt
 Author Information
 ------------------
 
-Yussuf Shaikh (yussuf@us.ibm.com)
-Pradipta Kr. Banerjee (bpradipt@in.ibm.com)
+- Yussuf Shaikh (yussuf@us.ibm.com)
+- Pradipta Kr. Banerjee (bpradipt@in.ibm.com)
