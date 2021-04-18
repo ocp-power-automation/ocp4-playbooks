@@ -1,12 +1,12 @@
 ---
 
 - name: Install Squid package
-  package:
+  ansible.builtin.package:
     name: squid
     state: present
 
 - name: Configure Squid
-  template:
+  ansible.builtin.template:
     src: etc/squid/squid.conf.j2
     dest: /etc/squid/squid.conf
     owner: root
@@ -17,7 +17,7 @@
     - restart squid
 
 - name: Add Squid to firewall
-  firewalld:
+  ansible.posix.firewalld:
     service: squid
     permanent: true
     state: enabled
@@ -26,18 +26,18 @@
     - restart firewalld
 
 - name: Set proxy details
-  set_fact:
+  ansible.builtin.set_fact:
     squid_proxy_url: "http://{{ bastion_vip | default(ansible_host) }}:{{ squid_http_port }}"
 
 - name: Create squid dropin directory
-  file:
+  ansible.builtin.file:
     path: /etc/systemd/system/squid.service.d
     state: directory
     mode: 0755
   become: true
 
 - name: Copy restart conf file to the squid dropin directory
-  copy:
+  ansible.builtin.copy:
     src: ../files/restart.conf
     dest: /etc/systemd/system/squid.service.d/restart.conf
   notify:

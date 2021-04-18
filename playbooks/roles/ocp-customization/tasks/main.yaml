@@ -1,7 +1,7 @@
 # tasks file for ocp4 post install customizations
 
 - name: Install python devel
-  package:
+  ansible.builtin.package:
     name:
       - python3
       - python3-devel
@@ -9,14 +9,14 @@
     state: present
 
 - name: Install openshift python module
-  pip:
+  ansible.builtin.pip:
     executable: pip3
     name: openshift
 
 - name:
   block:
     - name: Pause reboot node (Machineconfig)
-      k8s:
+      kubernetes.core.k8s:
         merge_type: merge
         kind: MachineConfigPool
         name: "{{ item }}"
@@ -29,19 +29,19 @@
 
     - name: Configure RHCOS kernel options via MachineConfig
       when: rhcos_kernel_options | length > 0
-      import_tasks: kernel.yaml
+      ansible.builtin.import_tasks: kernel.yaml
 
     - name: Configure Kernel tunables (sysctl) via Tuned Operator
       when: sysctl_tuned_options
-      import_tasks: tuned.yaml
+      ansible.builtin.import_tasks: tuned.yaml
 
     - name: Configure PowerVM RMC daemonset
       when: powervm_rmc
-      import_tasks: powervm_rmc.yaml
+      ansible.builtin.import_tasks: powervm_rmc.yaml
 
   always:
     - name: UnPause reboot node (Machineconfig)
-      k8s:
+      kubernetes.core.k8s:
         merge_type: merge
         kind: MachineConfigPool
         name: "{{ item }}"

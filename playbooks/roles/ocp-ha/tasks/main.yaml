@@ -1,28 +1,28 @@
 # tasks file for backup bastion in HA mode
 
 - name: Copy the workdir
-  synchronize:
+  ansible.posix.synchronize:
     src: "{{ workdir }}/"
     dest: "{{ workdir }}/"
     recursive: yes
   delegate_to: "{{ bastion_master }}"
 
 - name: mkdir ~/.kube
-  file:
+  ansible.builtin.file:
     path: ~/.kube
     state: directory
 
 - name: Install kubeconfig
-  copy:
+  ansible.builtin.copy:
     src: "{{ workdir }}/auth/kubeconfig"
     dest: "~/.kube/config"
 
 - name: Copy ignition files
-  synchronize:
+  ansible.posix.synchronize:
     src: "/var/www/html/ignition/"
     dest: "/var/www/html/ignition/"
     recursive: yes
   delegate_to: "{{ bastion_master }}"
 
 - name: Best effort SELinux repair - Apache
-  shell: "restorecon -vR /var/www/html || true"
+  ansible.builtin.shell: "restorecon -vR /var/www/html || true"

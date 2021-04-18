@@ -1,11 +1,11 @@
 ---
 
 - name: Set tools directory path
-  set_fact:
+  ansible.builtin.set_fact:
     tools_dir: "~/ocp4_tools"
 
 - name: Create tools directory
-  file:
+  ansible.builtin.file:
     path: "{{ tools_dir }}"
     state: "{{ item }}"
     mode: '0755'
@@ -15,50 +15,50 @@
 - name: local-registry service
   block:
   - name: Restart local-registry service
-    service:
+    ansible.builtin.service:
       name: local-registry
       state: restarted
 
   - name: Wait for local-registry to restart
-    wait_for:
+    ansible.builtin.wait_for:
       timeout: 15
   when: enable_local_registry
 
 - name: Extract OCP4 tools from release image ( local-registry )
   when: enable_local_registry
-  shell: |
+  ansible.builtin.shell: |
     oc adm release extract --tools {{ release_image_override }} --registry-config='{{ ansible_env.HOME }}/.openshift/pull-secret-updated'
   args:
     chdir: "{{ tools_dir }}"
 
 - name: Create pull-secret file
   when: not enable_local_registry
-  copy:
+  ansible.builtin.copy:
     content: "{{ install_config.pull_secret }}"
     dest: "{{ tools_dir }}/pull-secret"
 
 - name: Extract OCP4 tools from release image
   when: not enable_local_registry
-  shell: |
+  ansible.builtin.shell: |
     oc adm release extract --tools {{ release_image_override }} --registry-config='pull-secret'
   args:
     chdir: "{{ tools_dir }}"
 
 - name: Find archive packages
-  find:
+  ansible.builtin.find:
     paths: "{{ tools_dir }}"
     patterns: "openshift-*.tar.gz"
   register: find_result
 
 - name: Unarchive OCP4 tool files
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ item.path }}"
     dest: /usr/local/bin
     remote_src: yes
   with_items: "{{ find_result.files }}"
 
 - name: Remove tools directory
-  file:
+  ansible.builtin.file:
     path: "{{ tools_dir }}"
     state: "{{ item }}"
     mode: '0755'

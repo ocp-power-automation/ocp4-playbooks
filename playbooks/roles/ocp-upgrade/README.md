@@ -30,7 +30,7 @@ Example Playbook
     - name: Upgarde OCP cluster
       hosts: bastion
       tasks:
-        - include_role:
+        - ansible.builtin.include_role:
             name: ocp-upgrade
           when: upgrade_version != ""
 

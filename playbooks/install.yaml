@@ -29,7 +29,7 @@
   hosts: bastion[0]
   tasks:
   - name: Wait for bootstrap complete
-    shell: "openshift-install wait-for bootstrap-complete --log-level {{ log_level }}"
+    ansible.builtin.shell: "openshift-install wait-for bootstrap-complete --log-level {{ log_level }}"
     args:
       chdir: "{{ workdir }}"
 

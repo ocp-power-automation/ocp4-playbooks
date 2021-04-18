@@ -4,14 +4,14 @@
     state: present
 
 - name: Open NTP port on firewall
-  firewalld:
+  ansible.posix.firewalld:
       service: ntp
       permanent: yes
       immediate: yes
       state: enabled
 
 - name: Configure chrony to synchronize with ntp servers
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/chrony.conf
     regexp: '^server {{ item.server }} '
     state: present
@@ -26,7 +26,7 @@
     - restart chrony
 
 - name: Remove Chrony default pool when ntp server are used
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/chrony.conf
     regexp: '^pool .*\.rhel\.pool\.ntp\.org'
     state: absent
@@ -38,7 +38,7 @@
     - restart chrony
 
 - name: Allow local stratum in chrony.conf on bastion
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/chrony.conf
     regexp: '^local stratum'
     state: present
@@ -49,7 +49,7 @@
     - restart chrony
 
 - name: Allow Cluster Network in chrony.conf on bastion
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/chrony.conf
     regexp: '^allow'
     state: present
@@ -64,14 +64,14 @@
     - restart chrony
 
 - name: Create chrony dropin directory
-  file:
+  ansible.builtin.file:
     path: /etc/systemd/system/chronyd.service.d
     state: directory
     mode: 0755
   become: true
 
 - name: Copy restart conf file to the chrony dropin directory
-  copy:
+  ansible.builtin.copy:
     src: ../files/restart.conf
     dest: /etc/systemd/system/chronyd.service.d/restart.conf
   notify:

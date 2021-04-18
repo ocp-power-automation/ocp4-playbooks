@@ -1,20 +1,20 @@
 ---
 # handlers file for ansible-squid
 - name: restart squid
-  service:
+  ansible.builtin.service:
     name: squid
     state: restarted
     daemon_reload: yes
     enabled: yes
 
 - name: restart firewalld
-  service:
+  ansible.builtin.service:
     name: firewalld
     state: restarted
     enabled: yes
 
 - name: restart chrony
-  service:
+  ansible.builtin.service:
     name: chronyd
     state: restarted
     daemon_reload: yes

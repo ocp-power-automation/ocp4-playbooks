@@ -1,14 +1,14 @@
 ---
 
 - name: Check all co are in 'Available' state and not in 'Progressing' or 'Degraded' state
-  shell:  oc get co  --no-headers | awk '{ print $3 $4 $5 }' | grep -w  -v TrueFalseFalse  |  wc -l 
+  ansible.builtin.shell:  oc get co  --no-headers | awk '{ print $3 $4 $5 }' | grep -w  -v TrueFalseFalse  |  wc -l 
   register: cocount
   until: 0 == cocount.stdout|int
   retries: 6
   delay: 300
 
 - name: Fail upgrade process incase cluster state is unhealthy
-  fail:
+  ansible.builtin.fail:
     msg: The current cluster state is unhealthy, upgrading it is not recommended. Please run 'oc get co' command for more details or try upgrade after sometime.
   when: cocount.stdout|int > 0
 
@@ -16,19 +16,19 @@
   block:
      - name: Set upgrade channel
        when: upgrade_channel != ""
-       shell: |
+       ansible.builtin.shell: |
          oc patch clusterversion/version -p '{"spec":{"channel":"{{ upgrade_channel }}"}}' --type=merge
 
      - name: Upgrade cluster
-       shell: |
+       ansible.builtin.shell: |
          oc adm upgrade --to="{{ upgrade_version }}"
 
      - name: Waiting until upgrade completes
-       pause:
+       ansible.builtin.pause:
          minutes: "{{ pause_time }}"
 
      - name: Check for upgrade completion
-       shell: |
+       ansible.builtin.shell: |
          oc get clusterversion -o json|jq ".items[0].status.history[0].state"
        register: state
        until: state.stdout | replace('\"', '') == "Completed"
@@ -39,15 +39,15 @@
 - name: Upgrade ocp using a release image
   block:
      - name: Upgrade cluster
-       shell: |
+       ansible.builtin.shell: |
          oc adm upgrade --force --to-image="{{ upgrade_image }}" --allow-explicit-upgrade
 
      - name: Waiting until upgrade completes
-       pause:
+       ansible.builtin.pause:
          minutes: "{{ pause_time }}"
 
      - name: Check for upgrade completion
-       shell: |
+       ansible.builtin.shell: |
          oc get clusterversion -o json|jq ".items[0].status.history[0].state"
        register: state
        until: state.stdout | replace('\"', '') == "Completed"

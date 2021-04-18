@@ -2,26 +2,26 @@
 # tasks file for ocp4 config
 
 - name: Update DHCP server config for shared network
-  import_tasks: dhcpd_update.yaml
+  ansible.builtin.import_tasks: dhcpd_update.yaml
   when: dhcp_shared_network is defined and dhcp_shared_network
 
 - name: Setup Squid proxy server
-  import_tasks: squid.yaml
+  ansible.builtin.import_tasks: squid.yaml
   when: setup_squid_proxy
 
 - name: Extract OCP4 tools
-  import_tasks: extract.yaml
+  ansible.builtin.import_tasks: extract.yaml
   when: release_image_override != ""
 
 - name: Setup time synchronisation with Chrony
-  import_tasks: chrony.yaml
+  ansible.builtin.import_tasks: chrony.yaml
   when: chronyconfig.enabled
 
 - name: OCP config
   when: inventory_hostname in groups['bastion'][0]
   block:
   - name: Skip config if install workdir exist
-    stat:
+    ansible.builtin.stat:
       path: "{{ workdir }}"
     register: dir_status
 
@@ -29,7 +29,7 @@
     when: dir_status.stat.exists
 
   - name: Setup openshift workdir
-    file:
+    ansible.builtin.file:
       path: "{{ workdir }}"
       state: "{{ item }}"
       mode: '0755'
@@ -38,30 +38,30 @@
     - directory
 
   - name: Generate install-config.yaml
-    template:
+    ansible.builtin.template:
       src: ../templates/install-config.yaml.j2
       dest: "{{ workdir }}/install-config.yaml"
 
   - name: backup the install-config.yaml
-    copy:
+    ansible.builtin.copy:
       src: "{{ workdir }}/install-config.yaml"
       dest: "{{ workdir }}/install-config.yaml.back"
       remote_src: yes
       force: yes
 
   - name: Generate manifest files
-    shell: "openshift-install create manifests --log-level {{ log_level }}"
+    ansible.builtin.shell: "openshift-install create manifests --log-level {{ log_level }}"
     args:
       chdir: "{{ workdir }}"
 
   - name: Setup network configuration
-    template:
+    ansible.builtin.template:
       src: ../templates/cluster-network-03-config.yml.j2
       dest: "{{ workdir }}/manifests/cluster-network-03-config.yml"
     when: cni_network_mtu is defined
 
   - name: Remove the machine yaml files
-    file:
+    ansible.builtin.file:
       path: "{{ item }}"
       state: absent
     with_fileglob:
@@ -69,7 +69,7 @@
       - "{{ workdir }}/openshift/99_openshift-cluster-api_worker-machineset-*.yaml"
 
   - name: Make the control-plane un-schedulable
-    lineinfile:
+    ansible.builtin.lineinfile:
       path: "{{ workdir }}/manifests/cluster-scheduler-02-config.yml"
       regexp: '^(.*)mastersSchedulable: true'
       line: '\1mastersSchedulable: False'
@@ -77,7 +77,7 @@
     when: worker_count|int > 0
 
   - name: Copy machineconfig files generated from helpernode
-    copy:
+    ansible.builtin.copy:
       src: "{{ item }}"
       dest: "{{ workdir }}/manifests"
       remote_src: yes
@@ -86,23 +86,23 @@
     when: chronyconfig.enabled
 
   - name: Create ignition files
-    shell: "OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE={{ release_image_override }} openshift-install create ignition-configs --log-level {{ log_level }}"
+    ansible.builtin.shell: "OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE={{ release_image_override }} openshift-install create ignition-configs --log-level {{ log_level }}"
     args:
       chdir: "{{ workdir }}"
 
   - name: Copy update_ignition_bootstrap
-    template:
+    ansible.builtin.template:
       src: ../files/update_ignition_bootstrap.py
       dest: /tmp/update_ignition_bootstrap.py
       mode: '0755'
 
   - name: Update bootstrap ignition
-    shell: "python3 /tmp/update_ignition_bootstrap.py"
+    ansible.builtin.shell: "python3 /tmp/update_ignition_bootstrap.py"
     args:
       chdir: "{{ workdir }}"
 
   - name: Host ignition files
-    copy:
+    ansible.builtin.copy:
       src: "{{ item }}"
       dest: /var/www/html/ignition/
       mode: o+r
@@ -110,4 +110,4 @@
       - "{{ workdir }}/*.ign"
 
   - name: Best effort SELinux repair - Apache
-    shell: "restorecon -vR /var/www/html || true"
+    ansible.builtin.shell: "restorecon -vR /var/www/html || true"
