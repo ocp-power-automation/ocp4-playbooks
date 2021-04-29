@@ -13,7 +13,6 @@
       sed -i.bak '/pool {/d' /etc/dhcp/dhcpd.conf
       sed -i '/range /d' /etc/dhcp/dhcpd.conf
       sed -i '$d' /etc/dhcp/dhcpd.conf
-      sed -i 's/deny unknown-clients/#deny unknown-clients/' /etc/dhcp/dhcpd.conf
     args:
       warn: false
 
