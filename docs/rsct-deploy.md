@@ -52,3 +52,6 @@ After the playbook execution completes, the daemonset and pods should be availab
 ```
 oc get daemonset,pods -n powervm-rmc
 ```
+
+**NOTE:**
+On systems with large memory configuration, powervc-rmc pod may crash with OOMKilled error message. This happens when the memory limit is not sufficient on the pod. This can be resolved by modifying the daemonset for powervm-rmc to increase the memory limit to a bigger value.
