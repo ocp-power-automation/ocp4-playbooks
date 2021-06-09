@@ -1,6 +1,6 @@
 # Introduction
 The playbooks are used for installation of OCP on Power and other post install customizations.
-The playbooks are used with [PowerVS](https://github.com/ocp-power-automation/ocp4_upi_powervs), [PowerVC](https://github.com/ocp-power-automation/ocp4_upi_powervm)
+The playbooks are used with [PowerVS](https://github.com/ocp-power-automation/ocp4-upi-powervs), [PowerVC](https://github.com/ocp-power-automation/ocp4_upi_powervm)
 and [KVM](https://github.com/ocp-power-automation/ocp4_upi_kvm) projects.
 
 ## Assumptions
