@@ -12,6 +12,7 @@ if os.path.isfile('/tmp/chrony.conf.tmp'):
         chrony_b64 = base64.standard_b64encode(chronyconf.read()).decode().strip()
         files.append(
         {
+            'filesystem': 'root',
             'path': '/etc/chrony.conf',
             'user': {
                 'name': 'root'
