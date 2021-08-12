@@ -15,11 +15,11 @@ metadata:
   name: {{ install_config.cluster_id }}
 networking:
   clusterNetwork:
-  - cidr: 10.128.0.0/14
+  - cidr: {{ cluster_network_cidr }}
     hostPrefix: 23
   networkType: {{ cni_network_provider }}
   serviceNetwork:
-  - 172.30.0.0/16
+  - {{ service_network }}
 platform:
   none: {}
 sshKey: '{{ install_config.public_ssh_key }}'

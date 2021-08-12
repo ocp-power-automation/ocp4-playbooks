@@ -4,10 +4,10 @@ metadata:
   name: cluster
 spec: 
   clusterNetwork:
-  - cidr: 10.128.0.0/14
+  - cidr: {{ cluster_network_cidr }}
     hostPrefix: 23
   serviceNetwork:
-  - 172.30.0.0/16
+  - {{ service_network }}
   defaultNetwork:
     type: {{ cni_network_provider }}
 {% if cni_network_provider == "OVNKubernetes" %}
