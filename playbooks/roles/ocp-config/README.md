@@ -15,21 +15,22 @@ Requirements
 Role Variables
 --------------
 
-| Variable                | Required | Default        | Comments                                    |
-|-------------------------|----------|----------------|---------------------------------------------|
-| workdir                 | no       | ~/ocp4-workdir | Place for config generation and auth files  |
-| log_level               | no       | info           | Option --log-level in openshift-install cmd |
-| release_image_override  | no       | ""             | OCP image overide variable                  |
-| master_count            | yes      |                | Number of master nodes                      |
-| worker_count            | yes      |                | Number of worker nodes                      |
-| setup_squid_proxy       | no       | false          | Flag for setting up squid proxy server on bastion node |
-| proxy_url               | no       | ""             | Proxy url eg: http://[user:passwd@]server:port (NA when setup_squid_proxy: true)|
-| no_proxy                | no       | ""             | Comma seperated string of domains/cidr to exclude proxy |
-| enable_local_registry   | no       | false          | Set to true to enable usage of local registry for restricted network install |
-| chronyconfig.enabled    | no       | true           | Set to true to enable chrony configuration on the bastion node during installation. This also configure the bastion as a NTP server for the cluster. |
-| chronyconfig.content    | no       | ""             | List of time NTP servers and options pair (see chronyconfig examples). If empty, bastion will try sync with some default ntp server (internet) AND local HW clock (with higher stratum). |
-| chronyconfig.allow      | no       | ""             | List of network cidr (X.X.X.X/Y) allowed to sync with bastion configured as NTP server |
-| dhcp_shared_network     | no       |                | Flag to update DHCP server work on a shared network. (Neither ACK nor NACK unknown clients) |
+| Variable                   | Required | Default        | Comments                                    |
+|----------------------------|----------|----------------|---------------------------------------------|
+| workdir                    | no       | ~/ocp4-workdir | Place for config generation and auth files  |
+| log_level                  | no       | info           | Option --log-level in openshift-install cmd |
+| release_image_override     | no       | ""             | OCP image overide variable                  |
+| master_count               | yes      |                | Number of master nodes                      |
+| worker_count               | yes      |                | Number of worker nodes                      |
+| setup_squid_proxy          | no       | false          | Flag for setting up squid proxy server on bastion node |
+| proxy_url                  | no       | ""             | Proxy url eg: http://[user:passwd@]server:port (NA when setup_squid_proxy: true)|
+| no_proxy                   | no       | ""             | Comma seperated string of domains/cidr to exclude proxy |
+| enable_local_registry      | no       | false          | Set to true to enable usage of local registry for restricted network install |
+| chronyconfig.enabled       | no       | true           | Set to true to enable chrony configuration on the bastion node during installation. This also configure the bastion as a NTP server for the cluster. |
+| chronyconfig.content       | no       | ""             | List of time NTP servers and options pair (see chronyconfig examples). If empty, bastion will try sync with some default ntp server (internet) AND local HW clock (with higher stratum). |
+| chronyconfig.allow          | no       | ""             | List of network cidr (X.X.X.X/Y) allowed to sync with bastion configured as NTP server |
+| dhcp_shared_network         | no       |                | Flag to update DHCP server work on a shared network. (Neither ACK nor NACK unknown clients) |
+| rhcos_pre_kernel_options    | no       | []             | List of day-1 kernel options for RHCOS nodes eg: ["rd.multipath=default","root=/dev/disk/by-label/dm-mpath-root"] |
 
 *chronyconfig variable example *
 

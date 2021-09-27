@@ -54,6 +54,10 @@
     args:
       chdir: "{{ workdir }}"
 
+  - name: Configure RHCOS kernel options via MachineConfig before installation
+    when: rhcos_pre_kernel_options | length > 0
+    import_tasks: preinstall-kernel.yaml
+  
   - name: Remove the machine yaml files
     file:
       path: "{{ item }}"

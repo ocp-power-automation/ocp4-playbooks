@@ -48,6 +48,7 @@ workdir: <Directory to use for creating OCP configs>
 storage_type: <Storage type used in the cluster. Eg: nfs (Note: Currently NFS provisioner is not configured using this playbook. This variable is only used for setting up image registry to EmptyDir if storage_type is not nfs)>
 log_level: <Option --log-level in openshift-install commands. Default is 'info'>
 release_image_override: '<This is set to OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE while creating ign files. If you are using internal artifactory then ensure that you have added auth key to the pull_secret>'
+rhcos_pre_kernel_options: <List of day-1 kernel options for RHCOS nodes eg: ["rd.multipath=default","root=/dev/disk/by-label/dm-mpath-root"]>
 rhcos_kernel_options: <List of kernel options for RHCOS nodes eg: ["slub_max_order=0","loglevel=7"]>
 ```
 

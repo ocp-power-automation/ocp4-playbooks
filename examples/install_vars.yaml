@@ -12,6 +12,8 @@ release_image_override: ""
 
 node_connection_timeout: 2700
 
+rhcos_pre_kernel_options: []
+
 rhcos_kernel_options: []
 
 setup_squid_proxy: false
