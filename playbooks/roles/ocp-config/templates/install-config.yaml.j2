@@ -16,7 +16,7 @@ metadata:
 networking:
   clusterNetwork:
   - cidr: {{ cluster_network_cidr }}
-    hostPrefix: 23
+    hostPrefix: {{ cluster_network_hostprefix }}
   networkType: {{ cni_network_provider }}
   serviceNetwork:
   - {{ service_network }}
