@@ -1,0 +1,11 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: '{{ role_n }}'
+  name: 'preinstall-{{ role_n }}-kargs'
+spec:
+  kernelArguments:
+{% for option in rhcos_pre_kernel_options %}
+     - '{{ option }}'
+{% endfor %}
