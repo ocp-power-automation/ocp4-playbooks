@@ -5,7 +5,7 @@ metadata:
 spec: 
   clusterNetwork:
   - cidr: {{ cluster_network_cidr }}
-    hostPrefix: 23
+    hostPrefix: {{ cluster_network_hostprefix }}
   serviceNetwork:
   - {{ service_network }}
   defaultNetwork:
