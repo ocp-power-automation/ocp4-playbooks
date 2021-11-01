@@ -32,6 +32,9 @@ Role Variables
 | dhcp_shared_network         | no       |                | Flag to update DHCP server work on a shared network. (Neither ACK nor NACK unknown clients) |
 | cni_network_provider        | no       | OpenshiftSDN   | Sets the default Container Network Interface (CNI) network provider for the cluster |
 | cni_network_mtu             | no       |                | MTU value to assign to the CNI network. Recommended values for OpenshiftSDN: <NIC MTU> - 50; OVNKubernetes: <NIC MTU> - 100 |
+| cluster_network_cidr        | no       | 10.128.0.0/14  | Network (in CIDR) used for the pod networks.
+| cluster_network_hostprefix  | no       | 23             | The subnet prefix length to assign to each individual node. (netmask in CIDR format)
+| service_network             | no       | 172.30.0.0/16  | Network (in CIDR) used for the service network.
 | rhcos_pre_kernel_options    | no       | []             | List of day-1 kernel options for RHCOS nodes eg: ["rd.multipath=default","root=/dev/disk/by-label/dm-mpath-root"] |
 
 *chronyconfig variable example *
