@@ -1,0 +1,9 @@
+- name: Create kernel arguments
+  vars:
+    role_n: '{{ item }}'
+  template:
+    src: preinstall-node-kargs.yaml.j2
+    dest: "{{ workdir }}/manifests/preinstall-{{ item }}-kargs.yaml"
+  with_items:
+    - master
+    - worker
