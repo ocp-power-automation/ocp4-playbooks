@@ -105,6 +105,27 @@
     args:
       chdir: "{{ workdir }}"
 
+  - name: Copy inject_file_into_ignition.py
+    template:
+      src: ../files/inject_file_into_ignition.py
+      dest: /tmp/inject_file_into_ignition.py
+      mode: '0755'
+
+  - name: Update bootstrap ignition
+    shell: "python3 /tmp/inject_file_into_ignition.py bootstrap.ign /tmp/10-setmtu.link /etc/systemd/network/10-setmtu.link"
+    args:
+      chdir: "{{ workdir }}"
+
+  - name: Update master ignition
+    shell: "python3 /tmp/inject_file_into_ignition.py master.ign /tmp/10-setmtu.link /etc/systemd/network/10-setmtu.link"
+    args:
+      chdir: "{{ workdir }}"
+
+  - name: Update network for worker ignition
+    shell: "python3 /tmp/inject_file_into_ignition.py worker.ign /tmp/10-setmtu.link /etc/systemd/network/10-setmtu.link"
+    args:
+      chdir: "{{ workdir }}"
+
   - name: Host ignition files
     copy:
       src: "{{ item }}"

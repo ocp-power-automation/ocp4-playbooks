@@ -1,0 +1,22 @@
+[Match]
+
+# Edit or add one line for each node containing
+# the MAC address of the interfaces.
+#
+MACAddress=ea:ad:f9:70:cf:00
+MACAddress=ea:ad:f0:4f:34:00
+MACAddress=ea:ad:f8:1f:75:00
+MACAddress=ea:ad:f2:f1:a3:00
+MACAddress=ea:ad:fc:89:3c:01
+MACAddress=ea:ad:f0:ca:81:00
+
+# Optional: set a pci-bus address with
+# a glob pattern that will select the interfaces
+# on all nodes.  This may not work in all situations.
+#
+# Path=pci-0033:01:00.*
+
+# Link properties
+[Link]
+# Set the MTU value
+MTUBytes=9000
