@@ -21,6 +21,7 @@
   synchronize:
     src: "/var/www/html/ignition/"
     dest: "/var/www/html/ignition/"
+    rsync_path: "sudo rsync"
     recursive: yes
   delegate_to: "{{ bastion_master }}"
 

@@ -2,6 +2,7 @@
 # tasks file for ocp4 config
 
 - name: Update DHCP server config for shared network
+  become: true
   import_tasks: dhcpd_update.yaml
   when: dhcp_shared_network is defined and dhcp_shared_network
 
@@ -14,6 +15,7 @@
   when: release_image_override != ""
 
 - name: Setup time synchronisation with Chrony
+  become: true
   import_tasks: chrony.yaml
   when: chronyconfig.enabled
 
@@ -106,6 +108,7 @@
       chdir: "{{ workdir }}"
 
   - name: Host ignition files
+    become: true
     copy:
       src: "{{ item }}"
       dest: /var/www/html/ignition/
