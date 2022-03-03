@@ -1,0 +1,18 @@
+---
+service_instance_id: "bc895dc9-f626-41c0-bfd3-94a0d8942a5f"  #IBM Cloud PowerVS service instance id
+region: "mon"                                                #IBM Cloud PowerVS service instance region
+zone: "mon01"                                                #IBM Cloud PowerVS service instance zone
+
+masters:
+  - name: "mon01-master-0.rdr-pd-410.redhat.com"                                   #OCP Nodes Master name
+    id: "03c203dc-814f-4e61-88c1-6af4cb6d2e3d"               #OCP Nodes Master instance id
+  - name: "mon01-master-1.rdr-pd-410.redhat.com"
+    id: "0b67d0c2-339f-45ee-95b3-9b6d7c7524ef"
+  - name: "mon01-master-2.rdr-pd-410.redhat.com"
+    id: "38d98bb1-fb58-4ca8-a1c0-a7fb60625716"
+
+workers:
+  - name: "mon01-worker-0.rdr-pd-410.redhat.com"                                   #OCP Nodes Worker name
+    id: "e24feb20-a962-49a9-9a24-1fe19861f81e"               #OCP Nodes Worker instance id
+  - name: "mon01-worker-1.rdr-pd-410.redhat.com"
+    id: "e24feb20-a962-49a9-9a24-1fe19861f81e"
