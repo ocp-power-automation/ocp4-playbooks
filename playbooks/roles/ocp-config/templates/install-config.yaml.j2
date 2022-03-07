@@ -22,6 +22,7 @@ networking:
   - {{ service_network }}
 platform:
   none: {}
+fips: {{ fips_compliant }}
 sshKey: '{{ install_config.public_ssh_key }}'
 {% if enable_local_registry %}
 pullSecret: '{{ lookup('file', '~/.openshift/pull-secret-updated') }}'
