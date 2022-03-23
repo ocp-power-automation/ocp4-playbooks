@@ -1,0 +1,5 @@
+---
+# defaults file
+
+csi_driver_type: "stable"
+csi_driver_version: "v0.1.0"

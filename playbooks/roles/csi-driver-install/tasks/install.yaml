@@ -1,0 +1,18 @@
+---
+# tasks file for csi driver installation
+
+- name: Create a Secret resource
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: ibm-secret
+        namespace: kube-system
+        labels:
+      stringData:
+        IBMCLOUD_API_KEY: "{{ IBMCLOUD_API_KEY }}"
+
+- name: Create csi driver resource
+  shell: kubectl apply -k "https://github.com/kubernetes-sigs/ibm-powervs-block-csi-driver/deploy/kubernetes/overlays/{{ csi_driver_type }}?ref={{ csi_driver_version }}"

@@ -1,0 +1,8 @@
+---
+# tasks file for csi driver config and install
+
+- name: Run csi driver configuration tasks
+  import_tasks: config.yaml
+
+- name: Run csi driver installation tasks
+  import_tasks: install.yaml

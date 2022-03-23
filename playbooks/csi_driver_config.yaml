@@ -1,5 +1,0 @@
----
-- name: CSI Driver configuration
-  hosts: bastion[0]
-  roles:
-  - csi-driver-config
