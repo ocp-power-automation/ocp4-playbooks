@@ -1,0 +1,13 @@
+---
+- name: CSI Driver installation
+  hosts: bastion[0]
+  tasks:
+    - name: Fail csi-driver installation incase 'IBMCLOUD_API_KEY' environment variable is an empty string
+      fail:
+        msg: IBMCLOUD_API_KEY environment variable must be a non-empty string.
+      when: (lookup('env', 'IBMCLOUD_API_KEY') == "")
+
+    - include_role:
+        name: csi-driver-install
+      vars:
+        IBMCLOUD_API_KEY: "{{ lookup('env', 'IBMCLOUD_API_KEY') }}"
