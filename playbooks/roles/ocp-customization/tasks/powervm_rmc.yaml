@@ -1,4 +1,12 @@
+- name: Insure able to fetch project list
+  shell: "oc get projects"
+  register: projects_list
+  until: projects_list.stdout.find("default") != -1
+  retries: 20
+  delay: 30
+    
 - name: Create powervm-rmc project
+  when: projects_list.stdout.find("powervm-rmc") == -1
   k8s:
     name: powervm-rmc
     api_version: project.openshift.io/v1
