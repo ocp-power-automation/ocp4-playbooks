@@ -16,6 +16,10 @@ Use this to modify kernel tunables for nodes/pods via [tuned operator](https://d
 Use this to deploy containerized version of [RSCT](https://www.ibm.com/support/knowledgecenter/SGVKBA) on every OCP node running on PowerVM infrastructure.  
 This is enabled by default when deploying OCP in PowerVM or PowerVS. Follow the instructions provided [here](/docs/rsct-deploy.md) to deploy RSCT on an existing OCP cluster. 
 
+**4. Automate setting of Node Labels**
+
+Use this to automate setting of Node Labels on PowerVS. This refers to the [Well-known Labels document](https://kubernetes.io/docs/reference/labels-annotations-taints).
+
 Requirements
 ------------
 
@@ -32,7 +36,7 @@ Role Variables
 | sysctl_tuned_options    | no       | false       | Set to true to apply sysctl options via tuned operator |
 | powervm_rmc             | no       | true           | Set to true to deploy RMC daemonset on Node with arch ppc64le |
 | rsct_image              | no       | quay.io/powercloud/rsct-ppc64le:latest | Change to your own registry if you install without internet connection |
-
+| node_labels             | no       | {}              | Map of node labels and its values          |
 
 If `sysctl_tuned_options` is true then the following variables are must and should be set in [vars/tuned.yaml](./vars/tuned.yaml)
 
