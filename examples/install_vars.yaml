@@ -27,6 +27,8 @@ fips_compliant: false
 
 rsct_image: "quay.io/powercloud/rsct-ppc64le:latest"
 
+node_labels: {}
+
 chronyconfig:
    enabled: false
    content:

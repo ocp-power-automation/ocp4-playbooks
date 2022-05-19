@@ -6,3 +6,4 @@ rhcos_kernel_options: []
 sysctl_tuned_options: false
 powervm_rmc: true
 rsct_image: "quay.io/powercloud/rsct-ppc64le:latest"
+node_labels: {}
