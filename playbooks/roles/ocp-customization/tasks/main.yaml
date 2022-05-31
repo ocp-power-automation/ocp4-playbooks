@@ -53,3 +53,7 @@
       loop:
         - master
         - worker
+
+- name: Automate Node Labels
+  when: node_labels
+  import_tasks: node-label.yaml

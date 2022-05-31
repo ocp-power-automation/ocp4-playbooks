@@ -1,0 +1,14 @@
+---
+- name: Get all Nodes
+  shell: "oc get nodes | awk '(NR>1) { print $1 }'"
+  register: node_names
+
+- name: Automate Node labels
+  k8s:
+    state: present
+    kind: Node
+    name: "{{ item }}"
+    definition:
+      metadata:
+        labels: "{{ node_labels }}"
+  with_items: "{{ node_names.stdout_lines }}"
