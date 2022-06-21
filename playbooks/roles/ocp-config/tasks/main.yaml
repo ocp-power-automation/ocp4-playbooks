@@ -56,6 +56,16 @@
     args:
       chdir: "{{ workdir }}"
 
+#  - name: Generate Machine Config Master
+#    template:
+#      src: ../templates/99-master-machineconfig.yaml.j2
+#      dest: "{{ workdir }}/openshift/99-master-machineconfig.yaml"
+
+#  - name: Generate Machine Config Worker
+#    template:
+#      src: ../templates/99-worker-machineconfig.yaml.j2
+#      dest: "{{ workdir }}/openshift/99-worker-machineconfig.yaml"
+
   - name: Setup network configuration
     template:
       src: ../templates/cluster-network-03-config.yml.j2

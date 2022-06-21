@@ -1,0 +1,31 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker
+  name: worker-storage
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      filesystems:
+        - device: /dev/mapper/root
+          format: xfs
+          label: root
+          wipeFilesystem: true
+      luks:
+        - clevis:
+            tang:
+              - thumbprint: {{ thumbprint }}
+                url: {{ tang_server_ip:port }}
+            threshold: 1
+          device: /dev/disk/by-partlabel/root
+          label: luks-root
+          name: root
+          options:
+            - --cipher
+            - aes-cbc-essiv:sha256
+          wipeVolume: true 
+  fips: true
+
