@@ -17,8 +17,8 @@ spec:
       luks:
         - clevis:
             tang:
-              - thumbprint: {{ thumbprint }}
-                url: {{ tang_server_ip:port }}
+              - thumbprint: a3g3EE0MKttkjtBqzNghHCAZhsw
+                url: http://193.168.200.146:80
             threshold: 1
           device: /dev/disk/by-partlabel/root
           label: luks-root
