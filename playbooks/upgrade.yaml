@@ -4,5 +4,7 @@
   tasks:
     - include_role:
         name: ocp-upgrade
-      when: (upgrade_version != "") or (upgrade_image != "")
+      when: >
+            (upgrade_version != "") or (upgrade_image != "") or 
+            (eus_upgrade_channel != "") or (eus_upgrade_image != "")
 
