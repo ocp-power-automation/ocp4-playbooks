@@ -1,6 +1,10 @@
 ---
 # defaults file
 
+eus_upgrade_version: ""
+eus_upgrade_channel: ""
+eus_upgrade_image: ""
+eus_upstream: ""
 upgrade_version: ""
 upgrade_channel: ""
 upgrade_image: ""

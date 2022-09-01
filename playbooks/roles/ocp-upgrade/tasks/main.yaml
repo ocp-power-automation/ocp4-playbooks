@@ -1,16 +1,8 @@
 ---
 
-- name: Check all co are in 'Available' state and not in 'Progressing' or 'Degraded' state
-  shell:  oc get co  --no-headers | awk '{ print $3 $4 $5 }' | grep -w  -v TrueFalseFalse  |  wc -l 
-  register: cocount
-  until: 0 == cocount.stdout|int
-  retries: 6
-  delay: 300
-
-- name: Fail upgrade process incase cluster state is unhealthy
-  fail:
-    msg: The current cluster state is unhealthy, upgrading it is not recommended. Please run 'oc get co' command for more details or try upgrade after sometime.
-  when: cocount.stdout|int > 0
+- name: Check if cluster operators and nodes are healthy
+  include_role:
+    name: playbooks/roles/cluster-health-check
 
 - name: Upgrade ocp to a stable version
   block:
@@ -34,7 +26,9 @@
        until: state.stdout | replace('\"', '') == "Completed"
        retries: 5
        delay: "{{ delay_time }}"
-  when: upgrade_version != "" and upgrade_image == ""
+  when:
+  - upgrade_version != "" and upgrade_image == ""
+  - eus_upgrade_channel == "" and eus_upgrade_image == ""
 
 - name: Upgrade ocp using a release image
   block:
@@ -53,4 +47,12 @@
        until: state.stdout | replace('\"', '') == "Completed"
        retries: 5
        delay: "{{ delay_time }}"
-  when: upgrade_image != ""
+  when: 
+  - upgrade_image != ""
+  - eus_upgrade_channel == "" and eus_upgrade_image == ""
+
+- name: EUS to EUS upgrades 
+  include_tasks: "{{ role_path }}/tasks/eus_upgrades.yaml"
+  when: >
+      (eus_upgrade_channel != "" or eus_upgrade_image != "") and
+      ("eus" in eus_upgrade_channel or (upgrade_version != "" or upgrade_image != "" or upgrade_channel != ""))

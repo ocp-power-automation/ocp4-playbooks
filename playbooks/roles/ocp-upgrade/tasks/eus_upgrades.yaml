@@ -1,0 +1,173 @@
+---
+
+- name: Pause the worker's MachineConfigPool
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: MachineConfigPool
+      metadata:
+        name: worker
+      spec: 
+        paused: true
+
+- name: Patch the ClusterVersion with the eus intermediate upgrade channel
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: ClusterVersion
+      metadata:
+        name: version
+      spec: 
+        channel: "{{ eus_upgrade_channel }}"
+        upstream: "{{ eus_upstream }}"
+  when: eus_upgrade_channel != ""
+
+- name: Get the OCP version 
+  kubernetes.core.k8s_info:
+    kind: ClusterVersion
+    name: version
+  register: ocp_version
+
+- name: Providing the administrator acknowledgement for 4.8 to 4.9 upgrades
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: ConfigMap
+      metadata:
+        name: admin-acks
+        namespace: openshift-config
+      data: 
+        ack-4.8-kube-1.22-api-removals-in-4.9: "true"
+  when: ocp_version.resources[0].status.history[0].version | regex_search('4.8') == "4.8"
+
+- name: Upgrade cluster with upgrade version
+  shell: oc adm upgrade --to {{ eus_upgrade_version }}
+  when: eus_upgrade_image == "" and eus_upgrade_version != ""
+
+- name: Upgrade cluster with intermediate upgrade image
+  shell: |
+    oc adm upgrade --force --to-image="{{ eus_upgrade_image }}" --allow-explicit-upgrade
+  when: eus_upgrade_image != ""
+
+- name: Upgrade the cluster to the latest available build in the channel
+  shell: oc adm upgrade --to-latest
+  when: 
+  - eus_upgrade_channel != "" and eus_upgrade_image == ""
+  - eus_upgrade_version == ""
+
+- name: Waiting until upgrade completes
+  pause:
+    minutes: "{{ pause_time }}"
+
+- name: Check for upgrade completion
+  shell: oc get clusterversion -o json|jq ".items[0].status.history[0].state"
+  register: state
+  until: state.stdout | replace('\"', '') == "Completed"
+  retries: 5
+  delay: "{{ delay_time }}"
+
+- name: Check if cluster operators and nodes are healthy
+  include_role:
+    name: playbooks/roles/cluster-health-check
+
+- name: Get the master's MachineConfigPool information
+  kubernetes.core.k8s_info:
+    kind: MachineConfigPool
+    name: master
+  register: master_mcp
+
+- name: Check if the master's MachineConfigPool has updated
+  fail: 
+    msg: "Master MachineConfigPool not get updated"
+  when: master_mcp.resources[0].status.updatedMachineCount != master_mcp.resources[0].status.machineCount
+
+- name: Get the worker's MachineConfigPool information
+  kubernetes.core.k8s_info:
+    kind: MachineConfigPool
+    name: worker
+  register: worker_mcp
+
+- name: Check if the worker's MachineConfigPool has not updated
+  fail: 
+    msg: "Worker machine config pool get updated"
+  when: worker_mcp.resources[0].status.updatedMachineCount != 0 
+
+- name: Patch the ClusterVersion with the upgrade channel 
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: ClusterVersion
+      metadata:
+        name: version
+      spec: 
+        channel: "{{ upgrade_channel }}"
+        upstream: "{{ eus_upstream }}"
+  when: upgrade_channel != ""
+
+- name: Upgrade cluster with final upgrade version
+  shell: oc adm upgrade --to {{ upgrade_version }}
+  when: upgrade_image == "" and upgrade_version != ""
+
+- name: Upgrade cluster with final upgrade image
+  shell: oc adm upgrade --force --to-image="{{ upgrade_image }}" --allow-explicit-upgrade
+  when: upgrade_image != ""
+
+- name: Upgrade the cluster to the latest available build in the channel
+  shell: oc adm upgrade --to-latest
+  when: >
+        (upgrade_channel != "" and upgrade_image == "" and upgrade_version == "") or 
+        "eus" in eus_upgrade_channel
+
+- name: Waiting until upgrade completes
+  pause:
+    minutes: "{{ pause_time }}"
+
+- name: Check for upgrade completion
+  shell: oc get clusterversion -o json|jq ".items[0].status.history[0].state"
+  register: state
+  until: state.stdout | replace('\"', '') == "Completed"
+  retries: 5
+  delay: "{{ delay_time }}"
+
+- name: Check if cluster operators and nodes are healthy
+  include_role:
+    name: playbooks/roles/cluster-health-check
+
+- name: Get the updated machine count of masters
+  kubernetes.core.k8s_info:
+    kind: MachineConfigPool
+    name: master
+  register: master_mcp
+
+- name: Check if the master's MachineConfigPool has updated
+  fail: 
+    msg: "Master MachineConfigPool not get updated"
+  when: master_mcp.resources[0].status.updatedMachineCount != master_mcp.resources[0].status.machineCount
+
+- name: Resume the worker's MachineConfigPool
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: MachineConfigPool
+      metadata:
+        name: worker
+      spec: 
+        paused: false
+
+- name: Check if the worker's MachineConfigPool is updating 
+  shell: oc get mcp worker -o jsonpath='{.status.updatedMachineCount}'
+  register: worker_updated_machine_count
+  until: worker_updated_machine_count.stdout|int > 0
+  retries: 3
+  delay: 600
+
+- name: Check if the worker's MachineConfigPool has updated
+  shell: oc get mcp worker -o jsonpath='{.status.updatedMachineCount}'
+  register: worker_updated_machine_count
+  until: worker_updated_machine_count.stdout|int == worker_mcp.resources[0].status.machineCount|int
+  retries: 5
+  delay: 600
+
+- name: Check if cluster operators and nodes are healthy
+  include_role:
+    name: playbooks/roles/cluster-health-check
