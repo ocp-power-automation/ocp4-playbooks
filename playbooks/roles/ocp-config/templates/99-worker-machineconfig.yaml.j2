@@ -2,8 +2,8 @@ apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
 metadata:
   labels:
-    machineconfiguration.openshift.io/role: master
-  name: master-storage
+    machineconfiguration.openshift.io/role: worker
+  name: worker-storage
 spec:
   config:
     ignition:
@@ -22,7 +22,7 @@ spec:
               - thumbprint: 8oLBQpl4R94HQRyVL5xhB-KQ9aM
                 url: http://192.168.100.20:80
               - thumbprint: 8kQLnd23vDK5GYOcAU8UsR9AIOo
-                url: http://192.168.100.73:80	
+                url: http://192.168.100.73:80				
             threshold: 1
           device: /dev/disk/by-partlabel/root
           label: luks-root
@@ -30,7 +30,6 @@ spec:
           options:
             - --cipher
             - aes-cbc-essiv:sha256
-          wipeVolume: true
+          wipeVolume: true 
   fips: true
-
 
