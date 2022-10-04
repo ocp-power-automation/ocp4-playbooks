@@ -12,7 +12,7 @@ enable_local_registry: false
 chronyconfig:
    enabled: true
 
-cni_network_provider: OpenshiftSDN
+cni_network_provider: OVNKubernetes
 
 cluster_network_cidr: 10.128.0.0/14
 cluster_network_hostprefix: 23

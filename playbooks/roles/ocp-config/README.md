@@ -31,7 +31,7 @@ Role Variables
 | chronyconfig.content        | no       | ""             | List of time NTP servers and options pair (see chronyconfig examples). If empty, bastion will try sync with some default ntp server (internet) AND local HW clock (with higher stratum). |
 | chronyconfig.allow          | no       | ""             | List of network cidr (X.X.X.X/Y) allowed to sync with bastion configured as NTP server |
 | dhcp_shared_network         | no       |                | Flag to update DHCP server work on a shared network. (Neither ACK nor NACK unknown clients) |
-| cni_network_provider        | no       | OpenshiftSDN   | Sets the default Container Network Interface (CNI) network provider for the cluster |
+| cni_network_provider        | no       | OVNKubernetes  | Sets the default Container Network Interface (CNI) network provider for the cluster |
 | cni_network_mtu             | no       |                | MTU value to assign to the CNI network. Recommended values for OpenshiftSDN: <NIC MTU> - 50; OVNKubernetes: <NIC MTU> - 100 |
 | cluster_network_cidr        | no       | 10.128.0.0/14  | Network (in CIDR) used for the pod networks.
 | cluster_network_hostprefix  | no       | 23             | The subnet prefix length to assign to each individual node. (netmask in CIDR format)
