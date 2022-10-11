@@ -68,7 +68,58 @@ Example Playbook
       vars:
         master_count: "{{ groups['masters'] | length }}"
         worker_count: "{{ groups['workers'] | default([]) | length }}"
+		
 
+Luks Encryption Setup using Tang Server
+---------------------------------------
+
+**_Note: This is Day-1 Activity for encryption._**
+This feature will enable Luks Encryption using Tang Server on all master/worker nodes. 
+We need to create seperate MachineConfiguration file for master and worker.
+
+Requirements
+------------
+
+ - Tang server setup with server-ip and thumbprint
+   - **_Note: To setup Tang server please follow steps mentioned [here](https://docs.google.com/document/d/11M5GeV7wgOu4psFNBAF4Z4ykBJ9fw-jPucqZsT74Aus/edit)_**
+ - Need to enable below tasks in file playbooks/roles/ocp-config/tasks/main.yaml
+   - Generate Machine Config Master
+   - Generate Machine Config Worker   
+ 
+Example MachineConfiguration File
+----------------
+
+```apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: master-storage
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      filesystems:
+        - device: /dev/mapper/root
+          format: xfs
+          label: root
+          wipeFilesystem: true
+      luks:
+        - clevis:
+            tang:
+              - thumbprint: <thumbprint>
+                url: <tang_server_ip:port>
+            threshold: 1
+          device: /dev/disk/by-partlabel/root
+          label: luks-root
+          name: root
+          options:
+            - --cipher
+            - aes-cbc-essiv:sha256
+          wipeVolume: true 
+  fips: true
+ ```
 License
 -------
 

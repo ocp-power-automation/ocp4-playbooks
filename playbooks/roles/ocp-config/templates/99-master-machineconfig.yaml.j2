@@ -1,0 +1,36 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: master-storage
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      filesystems:
+        - device: /dev/mapper/root
+          format: xfs
+          label: root
+          wipeFilesystem: true
+      luks:
+        - clevis:
+            tang:
+              - thumbprint: bQ-IhgJhF57Z_aFDymu0Hhtb_iI
+                url: http://192.168.0.175:80	
+              - thumbprint: UAk5LlyqBANqGWQeRwOUfHkLcFA
+                url: http://192.168.0.220:80
+              - thumbprint: Sa4_90rsXMXVtgjcULwOQv9QnG0
+                url: http://192.168.0.210:80	
+            threshold: 1
+          device: /dev/disk/by-partlabel/root
+          label: luks-root
+          name: root
+          options:
+            - --cipher
+            - aes-cbc-essiv:sha256
+          wipeVolume: true
+  fips: true
+
+
