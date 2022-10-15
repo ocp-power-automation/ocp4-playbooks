@@ -1,0 +1,19 @@
+---
+# file: bootstrap-complete.yml
+
+- name: Check and configure control-plane nodes
+  hosts: masters
+  gather_facts: no
+  any_errors_fatal: true
+  serial:
+  - 1
+  roles:
+  - nodes-config
+
+- name: Wait for bootstrap
+  hosts: bastion[0]
+  tasks:
+  - name: Wait for bootstrap complete
+    shell: "openshift-install wait-for bootstrap-complete --log-level {{ log_level }}"
+    args:
+      chdir: "{{ workdir }}"
