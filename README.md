@@ -66,7 +66,16 @@ cp examples/inventory .
 Once you have configured the vars & inventory file, run the install playbook using:
 
 ```
-ansible-playbook  -i inventory -e @install_vars.yaml playbooks/install.yaml
+# Create OCP configurations and ignition files
+ansible-playbook -i inventory -e @install_vars.yaml playbooks/install-config.yaml
+# Check and configure bootstrap node
+ansible-playbook -i inventory -e @install_vars.yaml playbooks/bootstrap-config.yaml
+# Check and configure control-plane nodes and wait for bootstrap-complete step
+ansible-playbook -i inventory -e @install_vars.yaml playbooks/bootstrap-complete.yaml
+# Check and configure compute nodes, wait for install-complete step and run post-install steps
+ansible-playbook -i inventory -e @install_vars.yaml playbooks/install-complete.yaml
+# Upgrade OCP cluster
+ansible-playbook -i inventory -e @upgrade_vars.yaml playbooks/upgrade.yaml
 ```
 
 
