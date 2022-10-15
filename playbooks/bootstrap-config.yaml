@@ -1,0 +1,9 @@
+---
+# file: bootstrap-config.yml
+
+- name: Check and configure bootstrap node
+  hosts: bootstrap
+  gather_facts: no
+  any_errors_fatal: true
+  roles:
+  - nodes-config
