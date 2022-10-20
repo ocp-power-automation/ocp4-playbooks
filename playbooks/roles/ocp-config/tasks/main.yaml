@@ -56,6 +56,14 @@
     args:
       chdir: "{{ workdir }}"
 
+  - name: Generate Machine Config Master and Worker nodes
+    when:
+      - luks is defined and luks.enabled
+      - luks.config | length > 0
+      - luks.config[0].thumbprint is not none
+      - luks.config[0].url is not none
+    import_tasks: machineconfig_luks.yaml
+
   - name: Setup network configuration
     template:
       src: ../templates/cluster-network-03-config.yml.j2
