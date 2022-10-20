@@ -18,3 +18,15 @@ cluster_network_cidr: 10.128.0.0/14
 cluster_network_hostprefix: 23
 service_network: 172.30.0.0/16
 fips_compliant: false
+luks:
+   enabled: false
+   filesystem_device: /dev/mapper/root
+   format: xfs
+   wipeFileSystem: true
+   device: /dev/disk/by-partlabel/root
+   label: luks-root
+   options:
+      - --cipher
+      - aes-cbc-essiv:sha256
+   wipeVolume: true
+   name: root

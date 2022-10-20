@@ -1,0 +1,9 @@
+- name: Create Machine Config
+  vars:
+    role_n: '{{ item }}'
+  template:
+    src: ../templates/99-node-machineconfig.yaml.j2
+    dest: "{{ workdir }}/openshift/99-{{ item }}-machineconfig.yaml"
+  with_items:
+    - master
+    - worker
