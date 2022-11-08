@@ -5,6 +5,7 @@
     - include_role:
         name: ocp-upgrade
       when: >
-            (upgrade_version != "") or (upgrade_image != "") or 
-            (eus_upgrade_channel != "") or (eus_upgrade_image != "")
-
+            (upgrade_version is defined and upgrade_version != "") or
+            (upgrade_image is defined and upgrade_image != "") or
+            (eus_upgrade_channel is defined and eus_upgrade_channel != "") or
+            (eus_upgrade_image is defined and eus_upgrade_image != "")
