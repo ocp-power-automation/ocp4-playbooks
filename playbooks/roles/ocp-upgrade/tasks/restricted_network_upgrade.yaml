@@ -1,0 +1,81 @@
+---
+
+# tasks for updating a restricted network ocp cluster
+
+- name: Get count of paused machine config pools
+  shell: |
+    oc get mcp -ojson | jq ".items[].spec.paused" | grep -i true | wc -l
+  register: paused_mcps_count
+
+- name: Warn if machine config pools are paused
+  debug:
+    msg: "One or more Machine config pools appears paused. Nodes associated with a paused MCP are skipped during the update process."
+  when: 0 < paused_mcps_count.stdout|int
+
+- name: Set ocp image url
+  set_fact:
+    upgrade_image_url: "quay.io/openshift-release-dev/ocp-release:{{ upgrade_version }}-{{ architecture }}"
+
+- name: set image directory
+  set_fact:
+    repo_image_dir: "{{ lookup('env','HOME') }}/ocp_repo_image"
+
+- name: Create repo image directory
+  file:
+    path: "{{ repo_image_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Mirror images and configuration manifests to a directory
+  shell: |
+    oc adm release mirror -a {{ local_secret }} --to-dir={{ repo_image_dir }}/mirror --from={{ upgrade_image_url }}
+
+- name: Get sha key of the image
+  shell: |
+    oc image info {{ upgrade_image_url }} | grep "Digest:"|cut -d ':' -f 3
+  register: upgrade_image_sha_key
+
+- name: Upload images to local container registry
+  shell: |
+    oc image mirror -a {{ local_secret }} --from-dir={{ repo_image_dir }}/mirror "file://openshift/release:{{ upgrade_version }}*" {{ local_registry }}/{{ local_repository }}
+
+- name: Apply mirrored release image signature config
+  shell: |
+    oc apply -f {{ repo_image_dir }}/mirror/config/signature-sha256-{{ upgrade_image_sha_key.stdout[:16] }}.yaml
+
+- name: Get the OCP version 
+  kubernetes.core.k8s_info:
+    kind: ClusterVersion
+    name: version
+  register: ocp_version
+
+- name: Providing the administrator acknowledgement for 4.8 to 4.9 upgrades
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      kind: ConfigMap
+      metadata:
+        name: admin-acks
+        namespace: openshift-config
+      data:
+        ack-4.8-kube-1.22-api-removals-in-4.9: "true"
+  when: ocp_version.resources[0].status.history[0].version | regex_search('4.8') == "4.8"
+
+- name: Upgrade ocp and check for its completion
+  block:
+  - name: Upgrade ocp using a release image from local repository
+    shell: |
+      oc adm upgrade --allow-explicit-upgrade --to-image {{ local_registry }}/{{ local_repository }}@sha256:{{ upgrade_image_sha_key.stdout }}
+
+  - name: Waiting until upgrade completes
+    pause:
+      minutes: "{{ pause_time }}"
+
+  - name: Check for upgrade completion
+    shell: |
+      oc get clusterversion -o json|jq ".items[0].status.history[0].state"
+    register: state
+    until: state.stdout | replace('\"', '') == "Completed"
+    retries: 5
+    delay: "{{ delay_time }}"
+
