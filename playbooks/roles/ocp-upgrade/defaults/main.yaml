@@ -10,4 +10,8 @@ upgrade_channel: ""
 upgrade_image: ""
 pause_time: 90
 delay_time: 600
-
+restricted_network_upgrade: "false"
+architecture: ""
+local_secret: ""
+local_registry: ""
+local_repository: "ocp4/openshift4"
