@@ -29,7 +29,7 @@
   when:
   - upgrade_version != "" and upgrade_image == ""
   - eus_upgrade_channel == "" and eus_upgrade_image == ""
-  - restricted_network_upgrade != "true"
+  - not restricted_network_upgrade
 
 - name: Upgrade ocp using a release image
   block:
@@ -51,7 +51,7 @@
   when: 
   - upgrade_image != ""
   - eus_upgrade_channel == "" and eus_upgrade_image == ""
-  - restricted_network_upgrade != "true"
+  - not restricted_network_upgrade
 
 - name: EUS to EUS upgrades 
   include_tasks: "{{ role_path }}/tasks/eus_upgrades.yaml"
@@ -62,7 +62,6 @@
 - name: Update restricted network ocp cluster
   include_tasks: "{{ role_path }}/tasks/restricted_network_upgrade.yaml"
   when:
-    - restricted_network_upgrade == "true"
+    - restricted_network_upgrade
     - upgrade_version != ""
-    - architecture != ""
     - local_registry != "" and local_repository != "" and local_secret != "" 

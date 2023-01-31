@@ -27,7 +27,7 @@ Role Variables
 | pause_time                 | no       | 90                | Pauses playbook execution for a set amount of time in minutes |
 | delay_time                 | no       | 600               | Number of seconds to wait before starting to poll     |
 | restricted_network_upgrade | no       | false             | Set to true to upgrade the restricted network cluster |
-| architecture               | no       | ""                | Architecture of the cluster eg. ppc64le               |
+| architecture               | no       | "ppc64le"         | Architecture of the cluster.                          |
 | local_secret               | no       | ""                | Path to pull secret of the registry                   |
 | local_registry             | no       | ""                | Specify the local registry name along with port for your mirror repository eg. registry.test-ocp-600b.ibm.com:5000 |
 | local_repository           | no       | "ocp4/openshift4" | Name of the repository to create in your registry eg. ocp4/openshift4 |
