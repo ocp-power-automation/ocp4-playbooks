@@ -1,5 +1,10 @@
 ---
 
+- name: Get intial kubelet version
+  kubernetes.core.k8s_info:
+    kind: Node
+  register: initial_node_info
+
 - name: Pause the worker's MachineConfigPool
   kubernetes.core.k8s:
     state: present
@@ -9,6 +14,14 @@
         name: worker
       spec: 
         paused: true
+
+- name: Check if worker's MachineConfigPool has paused
+  shell: oc get mcp worker -o json | jq ".spec.paused"
+  register: worker_mcp_paused
+  failed_when: not worker_mcp_paused.stdout | bool
+
+- debug:
+    msg: "Worker's MachineConfigPool has paused. 'spec.paused: {{ worker_mcp_paused.stdout }}'"
 
 - name: Patch the ClusterVersion with the eus intermediate upgrade channel
   kubernetes.core.k8s:
@@ -92,6 +105,26 @@
     msg: "Worker machine config pool get updated"
   when: worker_mcp.resources[0].status.updatedMachineCount != 0 
 
+- name: Get kubelet version of workers after intermediate upgrade
+  kubernetes.core.k8s_info:
+    kind: Node
+    label_selectors: node-role.kubernetes.io/worker
+  register: worker_node_info
+
+- debug:
+    msg: "Kubelet version of worker nodes after intermediate upgrade: {{ item.status.nodeInfo.kubeletVersion }}"
+  with_items: "{{ worker_node_info.resources }}"
+  loop_control:
+    label: "{{ item.status.nodeInfo.kubeletVersion }}"
+
+- name: Validate kubelet version of workers after intermediate upgrade
+  fail:
+    msg: "Kubelet version has updated for workers"
+  when: item.status.nodeInfo.kubeletVersion != initial_node_info.resources[0].status.nodeInfo.kubeletVersion
+  with_items: "{{ worker_node_info.resources }}"
+  loop_control:
+    label: "{{ item.status.nodeInfo.kubeletVersion }}"
+
 - name: Patch the ClusterVersion with the upgrade channel 
   kubernetes.core.k8s:
     state: present
@@ -143,6 +176,26 @@
   fail: 
     msg: "Master MachineConfigPool not get updated"
   when: master_mcp.resources[0].status.updatedMachineCount != master_mcp.resources[0].status.machineCount
+
+- name: Get kubelet version of workers after final upgrade
+  kubernetes.core.k8s_info:
+    kind: Node
+    label_selectors: node-role.kubernetes.io/worker
+  register: worker_node_info
+
+- debug:
+    msg: "Kubelet version of worker nodes after final upgrade: {{ item.status.nodeInfo.kubeletVersion }}"
+  with_items: "{{ worker_node_info.resources }}"
+  loop_control:
+    label: "{{ item.status.nodeInfo.kubeletVersion }}"
+
+- name: Validate kubelet version of workers after final upgrade
+  fail:
+    msg: "Kubelet version has updated for workers"
+  when: item.status.nodeInfo.kubeletVersion != initial_node_info.resources[0].status.nodeInfo.kubeletVersion
+  with_items: "{{ worker_node_info.resources }}"
+  loop_control:
+    label: "{{ item.status.nodeInfo.kubeletVersion }}"
 
 - name: Resume the worker's MachineConfigPool
   kubernetes.core.k8s:
