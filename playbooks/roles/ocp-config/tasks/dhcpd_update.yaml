@@ -15,8 +15,6 @@
       sed -i '$d' /etc/dhcp/dhcpd.conf
       sed -i 's/deny unknown-clients/#deny unknown-clients/' /etc/dhcp/dhcpd.conf
       sed -i 's/authoritative;/#authoritative;/' /etc/dhcp/dhcpd.conf
-    args:
-      warn: false
 
   - name: restart dhcpd
     service:
