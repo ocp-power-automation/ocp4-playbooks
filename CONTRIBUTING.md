@@ -1,8 +1,8 @@
 # Contributing
 
-This project is [Apache 2.0 Licenced](https://github.com/ocp-power-automation/ocp4-playbooks/blob/master/LICENSE) and welcomes external contributions. When contributing to this repository, please first discuss the change you wish to make via an [issue](https://github.com/ocp-power-automation/ocp4-playbooks/issues).
+This project is [Apache 2.0 Licenced](https://github.com/ocp-power-automation/ocp4-playbooks/blob/main/LICENSE) and welcomes external contributions. When contributing to this repository, please first discuss the change you wish to make via an [issue](https://github.com/ocp-power-automation/ocp4-playbooks/issues).
 
-Please note we have a [code of conduct](https://github.com/ocp-power-automation/ocp4-playbooks/blob/master/CODE_OF_CONDUCT.md), please follow it in all your interactions with the project.
+Please note we have a [code of conduct](https://github.com/ocp-power-automation/ocp4-playbooks/blob/main/CODE_OF_CONDUCT.md), please follow it in all your interactions with the project.
 
 # Issues
 
@@ -13,12 +13,12 @@ Please note we have a [code of conduct](https://github.com/ocp-power-automation/
 # Pull Request Process
 
  - To contribute code or documentation, please submit a [pull request](https://github.com/ocp-power-automation/ocp4-playbooks/pulls).
- - Always take the latest update from upstream/master before creating a pull request.
+ - Always take the latest update from upstream/main before creating a pull request.
  - Ensure your changes work fine and have no syntax problems. Also, verify that it does not break the existing code flow.
  - Update the README.md or relevant documents with details of changes to the code. This includes variables change, added or updated feature, change in steps, dependencies change, etc.
  - Make use of proper commit message. Mention the issue# which you are planning to address eg: Fixes #38.
  - After creating the pull request ensure you implement all the review comments given if any. Pull request will be merged only when it has at least two approvals from the list of reviewers.
- - Please read [Developer Certificate of Origin](https://github.com/ocp-power-automation/ocp4-playbooks/blob/master/DCO1.1.txt) and sign-off your commit using command `git commit -s`.
+ - Please read [Developer Certificate of Origin](https://github.com/ocp-power-automation/ocp4-playbooks/blob/main/DCO1.1.txt) and sign-off your commit using command `git commit -s`.
 
 
 # Spec Formatting Conventions
