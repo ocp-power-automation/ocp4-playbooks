@@ -21,4 +21,4 @@
   shell: |
     oc patch proxy/cluster --type merge --patch '{"spec":{"httpProxy": "{{ ibm_cloud_http_proxy }}", "httpsProxy": "{{ ibm_cloud_http_proxy }}", "noProxy": "{{ proxy.stdout }},{{ ibm_cloud_dl_endpoint_net_cidr }}" }}'
   run_once: true
- 
+  when: ibm_cloud_http_proxy != ""
