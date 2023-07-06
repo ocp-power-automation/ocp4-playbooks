@@ -16,8 +16,8 @@
   shell: |
     oc get csr -ojson | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs -r oc adm certificate approve
   until: lookup('pipe','oc get nodes | grep -w worker | grep -w Ready | wc -l') == worker_count
-  retries: 30
-  delay: 60
+  retries: 40
+  delay: 30
   when: worker_count|int > 0
 
 - name: Wait for install-complete
