@@ -99,6 +99,26 @@
       - "/machineconfig/*-chrony-configuration.yaml"
     when: chronyconfig.enabled
 
+  - name: Generate kdump machine configuration
+    vars:
+      kdump_sysconfig: |
+        KDUMP_COMMANDLINE_REMOVE="{{ kdump.commandline_remove }}"
+        KDUMP_COMMANDLINE_APPEND="{{ kdump.commandline_append }}"
+        KEXEC_ARGS="{{ kdump.kexec_args }}"
+        KDUMP_IMG="{{ kdump.kdump_img }}"
+      kdump_conf: |
+        path {{ kdump.log_path }}
+        core_collector makedumpfile -l --message-level 7 -d 31    
+      crash_kernel_memory:  "{{ kdump.crash_kernel_memory }}"
+      role_n: "{{ item }}"
+    template:
+      src: ../templates/99-kdump-node-machineconfig.yaml.j2
+      dest: "{{ workdir }}/manifests/99-kdump-{{ item }}-node-machineconfig.yaml"
+    with_items:
+      - worker
+      - master
+    when: kdump.enabled
+
   - name: Create ignition files
     shell: "OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE={{ release_image_override }} openshift-install create ignition-configs --log-level {{ log_level }}"
     args:
