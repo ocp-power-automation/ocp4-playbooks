@@ -76,3 +76,9 @@
     dest: /etc/systemd/system/chronyd.service.d/restart.conf
   notify:
     - restart chrony
+
+- name: Force Chronyd Restart
+  systemd:
+    name: chronyd
+    daemon_reload: true
+    state: restarted
