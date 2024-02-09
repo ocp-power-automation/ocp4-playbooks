@@ -10,13 +10,14 @@
   block:
   - name: Remove pool, range and deny statements
     shell: |
-      sed -i.bak '/pool {/d' /etc/dhcp/dhcpd.conf
-      sed -i '/range /d' /etc/dhcp/dhcpd.conf
-      sed -i '$d' /etc/dhcp/dhcpd.conf
-      sed -i 's/deny unknown-clients/#deny unknown-clients/' /etc/dhcp/dhcpd.conf
-      sed -i 's/authoritative;/#authoritative;/' /etc/dhcp/dhcpd.conf
+      sudo sed -i.bak '/pool {/d' /etc/dhcp/dhcpd.conf
+      sudo sed -i '/range /d' /etc/dhcp/dhcpd.conf
+      sudo sed -i '$d' /etc/dhcp/dhcpd.conf
+      sudo sed -i 's/deny unknown-clients/#deny unknown-clients/' /etc/dhcp/dhcpd.conf
+      sudo sed -i 's/authoritative;/#authoritative;/' /etc/dhcp/dhcpd.conf
 
   - name: restart dhcpd
+    become: true
     service:
       name: dhcpd
       state: restarted
