@@ -41,7 +41,7 @@
 
 - name: Apply mirrored release image signature config
   shell: |
-    oc apply -f {{ repo_image_dir }}/mirror/config/signature-sha256-{{ upgrade_image_sha_key.stdout[:16] }}.yaml
+    oc apply -f {{ repo_image_dir }}/mirror/config/signature-sha256-{{ upgrade_image_sha_key.stdout[:16] }}.json
 
 - name: Get the OCP version 
   kubernetes.core.k8s_info:
