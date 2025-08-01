@@ -47,7 +47,6 @@
           spec:
             nodeSelector:
               kubernetes.io/arch: ppc64le
-              node.openshift.io/os_id: rhcos
             restartPolicy: Always
             serviceAccountName: powervm-rmc
             hostNetwork: true
