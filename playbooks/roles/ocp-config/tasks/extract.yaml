@@ -57,6 +57,28 @@
     remote_src: yes
   with_items: "{{ find_result.files }}"
 
+- name: Check if openshift-install binary exists
+  ansible.builtin.stat:
+    path: "/usr/local/bin/openshift-install"
+  register: binary_check
+  
+- name: Remove openshift-install binary when FIPS is enabled
+  ansible.builtin.file:
+    path: "/usr/local/bin/openshift-install"
+    state: absent
+  when: 
+    - fips_compliant
+    - binary_check.stat.exists
+
+- name: Link openshift-install-fips to openshift-install
+  file:
+    src: "/usr/local/bin/openshift-install-fips"
+    dest: "/usr/local/bin/openshift-install"
+    state: link
+  when: 
+    - fips_compliant  # FIPS is enabled
+    - binary_check.stat.exists
+
 - name: Remove tools directory
   file:
     path: "{{ tools_dir }}"
