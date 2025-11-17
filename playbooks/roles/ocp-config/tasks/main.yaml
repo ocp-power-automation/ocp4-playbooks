@@ -141,8 +141,8 @@
       ovs_script_enc: "{{ lookup('file', '/tmp/restart-ovs-service.sh') }}"
 
   - name: Display the value of the Ansible variable
-      debug:
-        msg: "File content is: {{ ovs_script_enc }}"
+    debug:
+      msg: "File content is: {{ ovs_script_enc }}"
 
   - name: Generate ovs machine configuration
     vars:
