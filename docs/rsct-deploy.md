@@ -1,7 +1,7 @@
-Deploy RSCT/RMC on an OCP Cluster on PowerVM
+Deploy RSCT Operator and daemonset on an OCP Cluster on PowerVM
 =========
 
-These instructions will help you deploy the RSCT/RMC daemonset on an OCP cluster running on PowerVM:
+These instructions will help you deploy the RSCT operator and daemonset on an OCP cluster running on PowerVM:
 
 **1. Setting up the inventory**
 
@@ -23,9 +23,9 @@ Make use of the sample file at examples/rmc_vars.yaml.
 cp examples/rmc_vars.yaml .
 ```
 
-**3. Run the playbook to deploy RSCT**
+**3. Run the playbook to deploy RSCT operator and daemonset**
 
-The ocp-customization [module](https://github.com/ocp-power-automation/ocp4-playbooks/tree/master/playbooks/roles/ocp-customization) is used to deploy RSCT/RMC daemonset on the cluster.
+The ocp-customization [module](https://github.com/ocp-power-automation/ocp4-playbooks/tree/master/playbooks/roles/ocp-customization) is used to deploy RSCT operator and daemonset on the cluster.
 
 ```
 ansible-playbook -i inventory -e @rmc_vars.yaml playbooks/customization.yaml
@@ -47,11 +47,14 @@ Defaults secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
 
 **4. Post deployment checks**
 
-After the playbook execution completes, the daemonset and pods should be available in the `powervm-rmc` namespace on the cluster. Run the following command to list them:
+After the playbook execution completes, the RSCT operator and daemonset should be available in the `rsct-operator-system` namespace on the cluster. Run the following command to check the operator status:
 
 ```
-oc get daemonset,pods -n powervm-rmc
+oc get pods -n rsct-operator-system
 ```
 
-**NOTE:**
-On systems with large memory configuration, powervc-rmc pod may crash with OOMKilled error message. This happens when the memory limit is not sufficient on the pod. This can be resolved by modifying the daemonset for powervm-rmc to increase the memory limit to a bigger value.
+You can also verify the RSCT daemonset deployment:
+
+```
+oc get daemonset -n rsct-operator-system
+```

@@ -43,9 +43,9 @@
       when: sysctl_tuned_options
       import_tasks: tuned.yaml
 
-    - name: Configure PowerVM RMC daemonset
-      when: powervm_rmc
-      import_tasks: powervm_rmc.yaml
+    - name: Configure PowerVM RSCT operator
+      when: powervm_rsct
+      import_tasks: powervm_rsct.yaml
 
   always:
     - name: UnPause reboot node (Machineconfig)
