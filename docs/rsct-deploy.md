@@ -23,6 +23,8 @@ Make use of the sample file at examples/rmc_vars.yaml.
 cp examples/rmc_vars.yaml .
 ```
 
+**Note:** The `powervm_rmc` variable is **DEPRECATED** and will be removed in a future release. If you are using `powervm_rmc: true`, please migrate to `powervm_rsct: true` instead. Both flags currently install the RSCT operator, but `powervm_rmc` support will be removed in the future.
+
 **3. Run the playbook to deploy RSCT operator and daemonset**
 
 The ocp-customization [module](https://github.com/ocp-power-automation/ocp4-playbooks/tree/master/playbooks/roles/ocp-customization) is used to deploy RSCT operator and daemonset on the cluster.
