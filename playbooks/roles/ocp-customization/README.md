@@ -34,8 +34,8 @@ Role Variables
 | workdir                 | no       | ~/ocp4-workdir | Place for config generation and auth files  |
 | rhcos_kernel_options    | no       | []             | List of kernel options for RHCOS nodes eg: ["slub_max_order=0","loglevel=7"] |
 | sysctl_tuned_options    | no       | false       | Set to true to apply sysctl options via tuned operator |
-| powervm_rmc             | no       | true           | Set to true to deploy RMC daemonset on Node with arch ppc64le |
-| rsct_image              | no       | quay.io/powercloud/rsct-ppc64le:latest | Change to your own registry if you install without internet connection |
+| powervm_rmc             | no       | false          | **DEPRECATED**: Use `powervm_rsct` instead. This flag will be removed in a future release. When set to true, it will install the RSCT operator (same as powervm_rsct) |
+| powervm_rsct            | no       | true           | Set to true to deploy RSCT operator on Node with arch ppc64le |
 | node_labels             | no       | {}              | Map of node labels and its values          |
 
 If `sysctl_tuned_options` is true then the following variables are must and should be set in [vars/tuned.yaml](./vars/tuned.yaml)
