@@ -13,14 +13,35 @@
 
 - name: Deploy RSCT Operator
   shell: |
-    oc create -k "https://github.com/ocp-power-automation/rsct-operator/config/default/?ref={{ rsct_version.stdout }}"
+    oc apply -k "https://github.com/ocp-power-automation/rsct-operator/config/install/?ref={{ rsct_version.stdout }}"
   register: deploy_operator
   failed_when: deploy_operator.rc != 0 and 'AlreadyExists' not in deploy_operator.stderr
   changed_when: deploy_operator.rc == 0
 
+- name: Wait for RSCT Operator deployment to be ready
+  shell: |
+    oc get deployment.apps/rsct-operator-controller-manager -n rsct-operator-system -o jsonpath='{.status.conditions[?(@.type=="Available")].status}'
+  register: rsct_deployment_status
+  until: rsct_deployment_status.stdout == "True"
+  retries: 30
+  delay: 10
+  changed_when: false
+
 - name: Create RSCT resource
   shell: |
-    oc create -k "https://github.com/ocp-power-automation/rsct-operator/config/samples/?ref={{ rsct_version.stdout }}" -n rsct-operator-system
+    oc apply -k "https://github.com/ocp-power-automation/rsct-operator/config/samples/?ref={{ rsct_version.stdout }}" -n rsct-operator-system
   register: create_rsct_resource
   failed_when: create_rsct_resource.rc != 0 and 'AlreadyExists' not in create_rsct_resource.stderr
   changed_when: create_rsct_resource.rc == 0
+
+- name: Wait for RSCT daemonset to be ready
+  shell: |
+    oc get daemonset.apps/rsct -n rsct-operator-system -o jsonpath='{.status.numberReady} {.status.desiredNumberScheduled} {.status.updatedNumberScheduled} {.status.numberAvailable}'
+  register: rsct_daemonset_status
+  until: >
+    (rsct_daemonset_status.stdout.split()[0] | int) == (rsct_daemonset_status.stdout.split()[1] | int) and
+    (rsct_daemonset_status.stdout.split()[2] | int) == (rsct_daemonset_status.stdout.split()[1] | int) and
+    (rsct_daemonset_status.stdout.split()[3] | int) == (rsct_daemonset_status.stdout.split()[1] | int)
+  retries: 15
+  delay: 10
+  changed_when: false
