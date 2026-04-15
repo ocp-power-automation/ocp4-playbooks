@@ -1,8 +1,2 @@
 ---
-# Recommended: Use powervm_rsct to deploy RSCT operator
-powervm_rsct: true
-
-# DEPRECATED: powervm_rmc is deprecated and will be removed in a future release.
-# It now installs the RSCT operator (same as powervm_rsct).
-# Please migrate to using powervm_rsct instead.
-# powervm_rmc: true
+powervm_rmc: true
