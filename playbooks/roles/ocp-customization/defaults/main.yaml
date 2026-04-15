@@ -4,6 +4,6 @@
 workdir: ~/ocp4-workdir
 rhcos_kernel_options: []
 sysctl_tuned_options: false
-powervm_rmc: false  # DEPRECATED: Use powervm_rsct instead. This flag will be removed in a future release.
-powervm_rsct: true
+powervm_rmc: true
+rsct_image: "quay.io/powercloud/rsct-ppc64le:latest"
 node_labels: {}
