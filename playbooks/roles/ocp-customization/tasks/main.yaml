@@ -43,18 +43,9 @@
       when: sysctl_tuned_options
       import_tasks: tuned.yaml
 
-    - name: Display deprecation warning for powervm_rmc
-      when: powervm_rmc is defined and powervm_rmc
-      debug:
-        msg: "WARNING: 'powervm_rmc' is deprecated and will be removed in a future release. Please use 'powervm_rsct' instead. The 'powervm_rmc' flag now installs the RSCT operator."
-
-    - name: Configure PowerVM RMC daemonset (DEPRECATED - use powervm_rsct)
-      when: powervm_rmc is defined and powervm_rmc and (powervm_rsct is not defined or not powervm_rsct)
-      import_tasks: powervm_rsct.yaml
-
-    - name: Configure PowerVM RSCT operator
-      when: powervm_rsct is defined and powervm_rsct
-      import_tasks: powervm_rsct.yaml
+    - name: Configure PowerVM RMC daemonset
+      when: powervm_rmc
+      import_tasks: powervm_rmc.yaml
 
   always:
     - name: UnPause reboot node (Machineconfig)
