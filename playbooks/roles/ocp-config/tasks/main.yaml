@@ -99,6 +99,37 @@
       - "/machineconfig/*-chrony-configuration.yaml"
     when: chronyconfig.enabled
 
+  - name: Check if oc-mirror is already installed
+    command: which oc-mirror
+    register: oc_mirror_check
+    failed_when: false
+    changed_when: false
+
+  - name: Build new_release_image_override from existing release_image_override(Without local-registry, oc-mirror )
+    set_fact:
+      new_release_image_override: "{{ release_image_override }}"
+    when:
+      - not ( qe_only_release_override | default(false) | bool )
+      - not ( enable_local_registry | default(false) | bool )
+
+  - name: Split release_image_override image into base and tag(for image with release tag)
+    set_fact:
+      base_image: "{{ release_image_override.rsplit(':', 1)[0] }}"
+      image_tag: "{{ release_image_override.rsplit(':', 1)[1] }}"
+    when: qe_only_release_override and enable_local_registry and oc_mirror_check.rc == 0
+
+  - name: Ensure base_image ends with /openshift/release-images
+    set_fact:
+      base_image: >-
+        {{ base_image if base_image.endswith('/openshift/release-images')
+          else base_image ~ '/openshift/release-images' }}
+    when: qe_only_release_override and enable_local_registry and oc_mirror_check.rc == 0
+
+  - name: Build new_release_image_override(local-registry and oc-mirror and tag based release image )
+    set_fact:
+      new_release_image_override: "{{ base_image }}:{{ image_tag }}"
+    when: qe_only_release_override and enable_local_registry and oc_mirror_check.rc == 0
+
   - name: Generate kdump machine configuration
     vars:
       kdump_sysconfig: |
@@ -120,7 +151,7 @@
     when: kdump.enabled
 
   - name: Create ignition files
-    shell: "OPENSHIFT_INSTALL_EXPERIMENTAL_DISABLE_IMAGE_POLICY={{ qe_only_disable_image_policy | lower }} OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE={{ release_image_override }} openshift-install create ignition-configs --log-level {{ log_level }}"
+    shell: "OPENSHIFT_INSTALL_EXPERIMENTAL_DISABLE_IMAGE_POLICY={{ qe_only_disable_image_policy | lower }} OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE={{ new_release_image_override }} openshift-install create ignition-configs --log-level {{ log_level }}"
     args:
       chdir: "{{ workdir }}"
 

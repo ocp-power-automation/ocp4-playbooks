@@ -30,10 +30,10 @@ additionalTrustBundle: |
 {{ lookup('file', '/opt/registry/certs/domain.crt') | indent(2, first=True) }}
 imageContentSources:
 - mirrors:
-  - registry.{{ install_config.cluster_id }}.{{ install_config.cluster_domain }}:5000/ocp4/openshift4
+  - registry.{{ install_config.cluster_id }}.{{ install_config.cluster_domain }}:5000/ocp4/openshift4/openshift/release-images
   source: quay.io/openshift-release-dev/ocp-release
 - mirrors:
-  - registry.{{ install_config.cluster_id }}.{{ install_config.cluster_domain }}:5000/ocp4/openshift4
+  - registry.{{ install_config.cluster_id }}.{{ install_config.cluster_domain }}:5000/ocp4/openshift4/openshift/release
   source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
 {% else %}
 pullSecret: '{{ install_config.pull_secret }}'

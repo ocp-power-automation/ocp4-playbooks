@@ -8,6 +8,7 @@ release_image_override: ""
 
 # IBM/Red Hat QE Only: Disables ClusterImagePolicy so Nightly builds can be deployed. This feature puts a cluster in unsupported mode.
 qe_only_disable_image_policy: false
+qe_only_release_override: false
 proxy_url: ""
 no_proxy: ""
 enable_local_registry: false
