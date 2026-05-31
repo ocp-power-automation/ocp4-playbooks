@@ -23,6 +23,9 @@ networking:
 platform:
   none: {}
 fips: {{ fips_compliant }}
+{% if install_config.os_image_stream is defined and install_config.os_image_stream != "" %}
+osImageStream: {{ install_config.os_image_stream }}
+{% endif %}
 sshKey: '{{ install_config.public_ssh_key }}'
 {% if enable_local_registry %}
 pullSecret: '{{ lookup('file', '~/.openshift/pull-secret-updated') }}'
