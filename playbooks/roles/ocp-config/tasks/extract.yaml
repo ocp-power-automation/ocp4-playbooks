@@ -24,10 +24,62 @@
       timeout: 15
   when: enable_local_registry
 
-- name: Extract OCP4 tools from release image ( local-registry )
-  when: enable_local_registry
+- name: Check if oc-mirror is already installed
+  command: which oc-mirror
+  register: oc_mirror_check
+  failed_when: false
+  changed_when: false
+
+- name: Check if release_image_override is digest image
+  set_fact:
+    is_digest_image: "{{ '@sha256:' in release_image_override }}"
+  when: enable_local_registry and oc_mirror_check.rc == 0
+
+- name: Split release_image_override image into base and tag(for image with digest value)
+  set_fact:
+    base_image: "{{ release_image_override.split('@')[0] }}"
+    image_tag: "{{ release_image_override.split('@')[1] }}"
+  when: is_digest_image and enable_local_registry and oc_mirror_check.rc == 0
+
+- name: Split release_image_override image into base and tag(for image with release tag)
+  set_fact:
+    base_image: "{{ release_image_override.rsplit(':', 1)[0] }}"
+    image_tag: "{{ release_image_override.rsplit(':', 1)[1] }}"
+  when: not is_digest_image and enable_local_registry and oc_mirror_check.rc == 0
+
+- name: Ensure base_image ends with /openshift/release-images
+  set_fact:
+    base_image: >-
+      {{ base_image if base_image.endswith('/openshift/release-images')
+         else base_image ~ '/openshift/release-images' }}
+  when: enable_local_registry and oc_mirror_check.rc == 0
+
+- name: Build new_release_image_override(local-registry and oc-mirror and tag based release image )
+  set_fact:
+    new_release_image_override: "{{ base_image }}:{{ image_tag }}"
+  when: not is_digest_image and enable_local_registry and oc_mirror_check.rc == 0
+
+- name: Build new_release_image_override(local-registry and oc-mirror and digest based image)
+  set_fact:
+    new_release_image_override: "{{ base_image }}@{{ image_tag }}"
+  when: is_digest_image and enable_local_registry and oc_mirror_check.rc == 0
+
+- name : Build the release_image_override (local-registry and oc-mirror and digest based image)
+  set_fact:
+    release_image_override: "{{ base_image }}@{{ image_tag }}"
+  when: enable_local_registry and oc_mirror_check.rc == 0
+
+- name: Update new_release_image_override value in install_vars.yaml
+  ansible.builtin.replace:
+    path: /root/ocp4-playbooks/install_vars.yaml
+    regexp: 'release_image_override:\s*.*'
+    replace: "release_image_override: {{ new_release_image_override }}"
+  when: enable_local_registry and oc_mirror_check.rc == 0
+
+- name: Extract OCP4 tools from release image ( local-registry and oc-mirror )
+  when: enable_local_registry and oc_mirror_check.rc == 0
   shell: |
-    oc adm release extract --tools {{ release_image_override }} --registry-config='{{ ansible_env.HOME }}/.openshift/pull-secret-updated'
+    oc adm release extract --tools {{ new_release_image_override }} --registry-config='{{ ansible_env.HOME }}/.openshift/pull-secret-updated'
   args:
     chdir: "{{ tools_dir }}"
 
