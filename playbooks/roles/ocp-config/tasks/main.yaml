@@ -51,8 +51,12 @@
       remote_src: yes
       force: yes
 
+  - name: Set disable image policy env prefix
+    set_fact:
+      disable_image_policy_env: "{{ 'OPENSHIFT_INSTALL_EXPERIMENTAL_DISABLE_IMAGE_POLICY=true ' if qe_only_disable_image_policy else '' }}"
+
   - name: Generate manifest files
-    shell: "OPENSHIFT_INSTALL_EXPERIMENTAL_DISABLE_IMAGE_POLICY={{ qe_only_disable_image_policy | lower }} openshift-install create manifests --log-level {{ log_level }}"
+    shell: "{{ disable_image_policy_env }}openshift-install create manifests --log-level {{ log_level }}"
     args:
       chdir: "{{ workdir }}"
 
@@ -120,7 +124,7 @@
     when: kdump.enabled
 
   - name: Create ignition files
-    shell: "OPENSHIFT_INSTALL_EXPERIMENTAL_DISABLE_IMAGE_POLICY={{ qe_only_disable_image_policy | lower }} OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE={{ release_image_override }} openshift-install create ignition-configs --log-level {{ log_level }}"
+    shell: "{{ disable_image_policy_env }}OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE={{ release_image_override }} openshift-install create ignition-configs --log-level {{ log_level }}"
     args:
       chdir: "{{ workdir }}"
 
