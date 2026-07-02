@@ -24,6 +24,7 @@ platform:
   none: {}
 fips: {{ fips_compliant }}
 {% if install_config.os_image_stream is defined and install_config.os_image_stream != "" %}
+featureSet: TechPreviewNoUpgrade
 osImageStream: {{ install_config.os_image_stream }}
 {% endif %}
 sshKey: '{{ install_config.public_ssh_key }}'
