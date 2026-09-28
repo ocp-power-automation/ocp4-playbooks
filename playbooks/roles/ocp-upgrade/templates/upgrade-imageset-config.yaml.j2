@@ -1,0 +1,13 @@
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v2alpha1
+mirror:
+  platform:
+    architectures:
+      - "{{ architecture }}"
+    channels:
+    - name: "{{ upgrade_channel if upgrade_channel != '' else 'stable-' + upgrade_version.split('.')[0] + '.' + upgrade_version.split('.')[1] }}"
+      minVersion: "{{ upgrade_version }}"
+      maxVersion: "{{ upgrade_version }}"
+      type: ocp
+    graph: false
+

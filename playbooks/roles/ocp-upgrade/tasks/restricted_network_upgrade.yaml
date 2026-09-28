@@ -12,36 +12,76 @@
     msg: "One or more Machine config pools appears paused. Nodes associated with a paused MCP are skipped during the update process."
   when: 0 < paused_mcps_count.stdout|int
 
-- name: Set ocp image url
+- name: Build OCP upgrade image reference from IDMS
   set_fact:
-    upgrade_image_url: "quay.io/openshift-release-dev/ocp-release:{{ upgrade_version }}-{{ architecture }}"
+    ocp_upgrade_image_ref: "quay.io/openshift-release-dev/ocp-release@sha256:{{ upgrade_image_sha_key.stdout | trim}}"
 
-- name: set image directory
+- name: set image workspace directory
   set_fact:
-    repo_image_dir: "{{ lookup('env','HOME') }}/ocp_repo_image"
+    repo_image_dir: "{{ oc_mirror_workspace_dir }}"
 
-- name: Create repo image directory
+- name: Set release image repository path (oc-mirror v2 convention)
+  set_fact:
+    release_image_repository: "{{ local_repository }}/openshift/release-images"
+
+- name: Create repo image workspace directory
   file:
     path: "{{ repo_image_dir }}"
     state: directory
     mode: '0755'
 
-- name: Mirror images and configuration manifests to a directory
-  shell: |
-    oc adm release mirror -a {{ local_secret }} --to-dir={{ repo_image_dir }}/mirror --from={{ upgrade_image_url }}
+- name: Generate ImageSetConfiguration for upgrade
+  template:
+    src: "{{ role_path }}/templates/upgrade-imageset-config.yaml.j2"
+    dest: "{{ repo_image_dir }}/upgrade-imageset-config.yaml"
+    mode: '0644'
 
-- name: Get sha key of the image
+- name: Mirror release images to local directory using oc-mirror --v2 (disk to file)
   shell: |
-    oc image info {{ upgrade_image_url }} | grep "Digest:"|cut -d ':' -f 3
+    oc-mirror \
+      -c {{ repo_image_dir }}/upgrade-imageset-config.yaml \
+      file://{{ repo_image_dir }}/mirror \
+      --authfile {{ local_secret }} \
+      --v2
+  register: oc_mirror_to_file
+
+- name: Upload mirrored images from local directory to registry using oc-mirror --v2 (file to mirror)
+  shell: |
+    oc-mirror \
+      -c {{ repo_image_dir }}/upgrade-imageset-config.yaml \
+      --from file://{{ repo_image_dir }}/mirror \
+      docker://{{ local_registry }}/{{ local_repository }} \
+      --authfile {{ local_secret }} \
+      --v2
+  register: oc_mirror_to_registry
+
+- name: Apply IDMS and ITMS cluster-resources from oc-mirror working directory
+  shell: |
+    oc apply -f {{ repo_image_dir }}/mirror/working-dir/cluster-resources/idms-oc-mirror.yaml \
+             -f {{ repo_image_dir }}/mirror/working-dir/cluster-resources/itms-oc-mirror.yaml
+  register: idms_itms_apply
+  changed_when: idms_itms_apply.rc == 0
+
+- name: Apply signature configmap from oc-mirror working directory
+  shell: |
+    oc apply -f {{ repo_image_dir }}/mirror/working-dir/cluster-resources/signature-configmap.yaml
+  ignore_errors: true
+
+- name: Get sha key of the upgrade image from local registry
+  shell: |
+    oc image info --registry-config {{ local_secret }} \
+      {{ local_registry }}/{{ release_image_repository }}:{{ upgrade_version }}-{{ architecture }} \
+      | grep "Digest:" | awk '{print $2}' | cut -d ':' -f 2
   register: upgrade_image_sha_key
 
-- name: Upload images to local container registry
-  shell: |
-    oc image mirror -a {{ local_secret }} --from-dir={{ repo_image_dir }}/mirror "file://openshift/release:{{ upgrade_version }}*" {{ local_registry }}/{{ local_repository }}
-
-- name: Apply mirrored release image signature config
-  shell: |
-    oc apply -f {{ repo_image_dir }}/mirror/config/signature-sha256-{{ upgrade_image_sha_key.stdout[:16] }}.json
+- name: Fail if SHA digest could not be resolved
+  fail:
+    msg: >
+      Could not resolve SHA digest for {{ upgrade_version }}-{{ architecture }} from
+      {{ local_registry }}/{{ release_image_repository }}.
+      Verify with: oc image info --registry-config {{ local_secret }}
+      {{ local_registry }}/{{ release_image_repository }}:{{ upgrade_version }}-{{ architecture }}
+  when: upgrade_image_sha_key.stdout | trim == ""
 
 - name: Get the OCP version 
   kubernetes.core.k8s_info:
@@ -75,10 +115,13 @@
 
 - name: Upgrade ocp and check for its completion
   block:
-  - name: Upgrade ocp using a release image from local repository
+  - name: Upgrade ocp using a source release reference (resolved via IDMS)
     shell: |
-      oc adm upgrade --allow-explicit-upgrade --to-image {{ local_registry }}/{{ local_repository }}@sha256:{{ upgrade_image_sha_key.stdout }}
-
+        oc adm upgrade --allow-explicit-upgrade \
+        --to-image={{ ocp_upgrade_image_ref }}
+    register: ocp_upgrade_result
+    changed_when: "'no updates are available' not in ocp_upgrade_result.stdout"
+  
   - name: Waiting until upgrade completes
     pause:
       minutes: "{{ pause_time }}"
